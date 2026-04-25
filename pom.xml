@@ -13,8 +13,6 @@
     <modules>
         <module>edge-hub</module>
         <module>cloud-service</module>
-        <module>edge-hub</module>
-        <module>cloud-service</module>
     </modules>
 
     <parent>
