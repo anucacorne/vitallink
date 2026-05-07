@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VitalLink — Design Explorations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    @keyframes vl-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.85); }
+    }
+    button { font-family: inherit; }
+    /* DM-canvas overrides */
+    [data-screen-label] { scroll-margin-top: 80px; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="data.jsx"></script>
+  <script type="text/babel" src="primitives.jsx"></script>
+  <script type="text/babel" src="map.jsx"></script>
+  <script type="text/babel" src="variant-editorial.jsx"></script>
+  <script type="text/babel" src="variant-mission.jsx"></script>
+  <script type="text/babel" src="variant-driver.jsx"></script>
+  <script type="text/babel" src="variant-detail.jsx"></script>
+  <script type="text/babel" data-presets="react">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "mode": "light"
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const t = window.useTweaks(TWEAK_DEFAULTS);
+      const mode = t.mode === 'dark' ? 'dark' : 'light';
+
+      return (
+        <>
+          <window.DesignCanvas
+            title="VitalLink — Explorări design"
+            subtitle="Monitorizare logistică medicală critică · 4 direcții pe canvas"
+            background={mode === 'dark' ? '#0A1212' : '#EFE9DD'}
+          >
+            <window.DCSection id="desktop" title="Dispecerat — Desktop" subtitle="Două direcții pentru centrul de control">
+              <window.DCArtboard id="editorial" label="A · Editorial Dispatch" width={1440} height={1080}>
+                <window.VariantEditorial mode={mode} />
+              </window.DCArtboard>
+              <window.DCArtboard id="mission" label="B · Mission Control" width={1440} height={1080}>
+                <window.VariantMission mode={mode} />
+              </window.DCArtboard>
+            </window.DCSection>
+
+            <window.DCSection id="mobile" title="Șofer — Mobile" subtitle="Aplicația din cabină">
+              <window.DCArtboard id="driver" label="C · Driver App (iOS)" width={420} height={870}>
+                <div style={{ display: 'flex', justifyContent: 'center', padding: 14 }}>
+                  <window.VariantDriver mode={mode} />
+                </div>
+              </window.DCArtboard>
+            </window.DCSection>
+
+            <window.DCSection id="detail" title="Detaliu transport" subtitle="Deep-dive cu jurnal audit + telemetrie">
+              <window.DCArtboard id="detail-view" label="D · Transport Detail" width={1200} height={1080}>
+                <window.VariantDetail mode={mode} />
+              </window.DCArtboard>
+            </window.DCSection>
+          </window.DesignCanvas>
+
+          <window.TweaksPanel title="Tweaks">
+            <window.TweakSection title="Aspect">
+              <window.TweakRadio
+                label="Temă"
+                value={t.mode}
+                onChange={(v) => t.setTweak('mode', v)}
+                options={[
+                  { value: 'light', label: 'Light' },
+                  { value: 'dark', label: 'Dark' },
+                ]}
+              />
+            </window.TweakSection>
+          </window.TweaksPanel>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
