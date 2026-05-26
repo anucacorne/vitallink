@@ -92,41 +92,162 @@
         .panel-body { padding: 20px; }
         .panel-body.scroll { max-height: 480px; overflow-y: auto; }
 
-        /* Overview grid */
-        .overview-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; }
-        .map-container { height: 480px; }
-        .map-inner { height: calc(100% - 48px); }
+        /* Overview grid — 3 coloane: harta | transport selectat | alerte */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px 300px;
+            gap: 20px;
+            align-items: start;
+        }
+        .map-container { }
+        .map-inner { height: 360px; }
         #transport-map { width: 100%; height: 100%; border-radius: 0 0 12px 12px; }
 
-        /* Alert row */
-        .alert-row {
-            display: flex; align-items: center; gap: 14px;
-            padding: 14px 18px; border-radius: 10px; margin-bottom: 8px;
+        /* ─── PANOU TRANSPORT SELECTAT (nou) ─── */
+        .selected-panel {
+            background: #111318;
+            border: 1px solid #1E2028;
+            border-radius: 14px;
+            overflow: hidden;
         }
-        .alert-dot {
-            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        .selected-panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #1E2028;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6B7280;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
-        .alert-content { flex: 1; min-width: 0; }
-        .alert-msg { font-size: 13px; font-weight: 600; color: #E5E7EB; margin-bottom: 3px; }
-        .alert-meta { display: flex; gap: 12px; font-size: 11px; color: #6B7280; }
-        .alert-meta .sev { font-weight: 600; }
-        .alert-type-badge {
-            font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
-            background: #1E2028; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.04em;
+        .selected-content { padding: 16px; }
+
+        .sel-status-row {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
         }
-        .btn-ack {
-            background: transparent; border-radius: 8px;
-            padding: 6px 14px; font-size: 12px; font-weight: 600;
-            cursor: pointer; display: flex; align-items: center; gap: 5px;
-            font-family: inherit; transition: all 0.15s;
+        .sel-status-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            animation: blink 2s infinite;
         }
-        .btn-ack:hover { opacity: 0.8; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        .sel-name {
+            font-size: 16px; font-weight: 700; color: #F0F0F2;
+            line-height: 1.2; margin-bottom: 4px;
+        }
+        .sel-id { font-size: 11px; color: #4B5563; margin-bottom: 14px; }
+
+        /* Rută cu progres */
+        .route-block { margin-bottom: 14px; }
+        .route-stops { display: flex; flex-direction: column; gap: 8px; }
+        .route-stop { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+        .stop-circle {
+            width: 9px; height: 9px; border-radius: 50%;
+            border: 2px solid #10B981; flex-shrink: 0;
+        }
+        .stop-circle.filled { background: #10B981; }
+        .stop-info { flex: 1; }
+        .stop-name { font-weight: 600; color: #E5E7EB; }
+        .stop-sub { font-size: 11px; color: #4B5563; }
+
+        .progress-bar-wrap {
+            margin: 6px 0 4px 19px;
+            height: 4px; background: #1E2028; border-radius: 2px; overflow: hidden;
+        }
+        .progress-bar-fill { height: 100%; border-radius: 2px; background: #10B981; }
+        .progress-label { margin-left: 19px; font-size: 11px; color: #4B5563; }
+
+        /* Mini stats grid */
+        .mini-stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 8px; margin-bottom: 12px;
+        }
+        .mini-stat {
+            background: #0D0F14; border-radius: 10px; padding: 10px 12px;
+        }
+        .mini-stat-label {
+            font-size: 10px; color: #4B5563; text-transform: uppercase;
+            letter-spacing: 0.06em; margin-bottom: 4px;
+        }
+        .mini-stat-value {
+            font-size: 20px; font-weight: 700; color: #F0F0F2; line-height: 1;
+        }
+        .mini-stat-sub { font-size: 10px; color: #4B5563; margin-top: 2px; }
+
+        /* Sparkline canvas */
+        .sparkline-canvas { width: 100%; height: 28px; display: block; margin-top: 6px; }
+
+        /* Viability bar */
+        .viability-block {
+            background: #0D0F14; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;
+        }
+        .viability-row {
+            display: flex; justify-content: space-between;
+            font-size: 10px; color: #4B5563; text-transform: uppercase;
+            letter-spacing: 0.06em; margin-bottom: 6px;
+        }
+        .viability-row span:last-child { color: #E5E7EB; font-weight: 600; }
+        .viability-bar {
+            height: 6px; background: #1E2028; border-radius: 3px; overflow: hidden;
+        }
+        .viability-fill { height: 100%; border-radius: 3px; }
+
+        .sel-meta {
+            font-size: 11px; color: #4B5563; line-height: 1.8;
+            padding-top: 10px; border-top: 1px solid #1E2028;
+        }
+        .sel-meta strong { color: #9CA3AF; }
+
+        /* ─── GRAFIC TEMPERATURA ─── */
+        .temp-chart-block {
+            background: #0D0F14; border-radius: 10px; padding: 12px;
+            margin-bottom: 10px;
+        }
+        .temp-chart-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2px; font-size: 10px; color: #4B5563;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .temp-chart-header span.warn { color: #EF4444; font-weight: 600; }
+        .temp-canvas { width: 100%; height: 60px; display: block; margin-top: 4px; }
+
+        /* ─── STREAM ALERTE (nou) ─── */
+        .alert-stream { }
+        .stream-item {
+            padding: 12px 14px; border-radius: 10px; margin-bottom: 8px;
+            border: 1px solid transparent;
+        }
+        .stream-item.critical { background: #EF444412; border-color: #EF444430; }
+        .stream-item.high     { background: #F59E0B12; border-color: #F59E0B30; }
+        .stream-item.medium   { background: #3B82F612; border-color: #3B82F630; }
+        .stream-item.low      { background: #10B98108; border-color: #10B98120; }
+        .stream-item.acked    { background: #111318; border-color: #1E2028; opacity: 0.55; }
+
+        .stream-top {
+            display: flex; align-items: flex-start;
+            justify-content: space-between; gap: 8px; margin-bottom: 5px;
+        }
+        .stream-level-row { display: flex; align-items: center; gap: 6px; }
+        .stream-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+        .stream-level {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+        }
+        .stream-time { font-size: 11px; color: #4B5563; flex-shrink: 0; }
+        .stream-msg { font-size: 12px; color: #E5E7EB; line-height: 1.4; margin-bottom: 4px; }
+        .stream-msg.acked { text-decoration: line-through; color: #4B5563; }
+        .stream-sub { font-size: 11px; color: #4B5563; }
+        .stream-actions { display: flex; gap: 6px; margin-top: 8px; }
+        .btn-confirm-alert {
+            padding: 4px 12px; background: #10B981; color: #fff;
+            border: none; border-radius: 6px; font-size: 11px; font-weight: 600;
+            cursor: pointer; font-family: inherit;
+        }
+        .btn-confirm-alert:hover { background: #059669; }
         .badge-count {
             background: #EF444420; color: #EF4444;
             font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
         }
 
-        /* Transport row */
+        /* Transport rows */
         .transport-row {
             display: flex; align-items: center; gap: 14px;
             padding: 14px 18px; background: #111318;
@@ -149,7 +270,7 @@
         }
         .transport-temp { font-size: 11px; color: #4B5563; display: flex; align-items: center; gap: 3px; justify-content: flex-end; }
 
-        /* Transport detail */
+        /* Transport detail (pagina Transporturi) */
         .detail-panel {
             background: #111318; border: 1px solid #1E2028;
             border-radius: 14px; padding: 24px; margin-top: 12px;
@@ -217,6 +338,56 @@
             font-size: 13px; cursor: pointer; font-family: inherit;
         }
 
+        /* Login */
+        .login-overlay {
+            position: fixed; inset: 0; background: #0A0B0F;
+            display: flex; align-items: center; justify-content: center; z-index: 100;
+        }
+        .login-box {
+            background: #111318; border: 1px solid #1E2028; border-radius: 16px;
+            padding: 40px; width: 360px;
+        }
+        .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+        .login-title { font-size: 20px; font-weight: 700; color: #F0F0F2; }
+        .login-sub { font-size: 12px; color: #4B5563; margin-top: 2px; }
+        .login-field { margin-bottom: 16px; }
+        .login-label { font-size: 12px; color: #6B7280; margin-bottom: 6px; display: block; }
+        .login-input {
+            width: 100%; padding: 10px 14px; background: #0D0F14;
+            border: 1px solid #2E3040; border-radius: 8px; color: #E5E7EB;
+            font-size: 14px; font-family: inherit; outline: none;
+        }
+        .login-input:focus { border-color: #10B981; }
+        .btn-login {
+            width: 100%; padding: 11px; background: #10B981; border: none;
+            border-radius: 8px; color: #fff; font-size: 14px; font-weight: 600;
+            cursor: pointer; font-family: inherit; margin-top: 8px;
+        }
+        .btn-login:hover { background: #059669; }
+        .login-error { color: #EF4444; font-size: 12px; margin-top: 8px; display: none; }
+
+        /* Dropdown */
+        .user-menu { position: relative; }
+        .user-dropdown {
+            display: none; position: absolute; right: 0; top: 42px;
+            background: #111318; border: 1px solid #1E2028; border-radius: 10px;
+            padding: 6px; min-width: 180px; z-index: 100;
+        }
+        .user-dropdown.open { display: block; }
+        .dropdown-header {
+            padding: 10px 12px 8px; border-bottom: 1px solid #1E2028; margin-bottom: 4px;
+        }
+        .dropdown-name { font-size: 13px; font-weight: 600; color: #F0F0F2; }
+        .dropdown-role { font-size: 11px; color: #4B5563; }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 6px; font-size: 13px;
+            color: #9CA3AF; cursor: pointer; transition: all 0.15s;
+        }
+        .dropdown-item:hover { background: #1E2028; color: #F0F0F2; }
+        .dropdown-item.danger { color: #EF4444; }
+        .dropdown-item.danger:hover { background: #EF444410; }
+
         .empty-state {
             background: #111318; border: 1px solid #1E2028; border-radius: 14px;
             padding: 60px; text-align: center; color: #4B5563; font-size: 14px;
@@ -229,7 +400,11 @@
         }
         .leaflet-popup-tip { background: #1A1D26 !important; }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1100px) {
+            .overview-grid { grid-template-columns: 1fr 1fr; }
+            .overview-grid .map-container { grid-column: 1 / -1; }
+        }
+        @media (max-width: 700px) {
             .overview-grid { grid-template-columns: 1fr; }
             .transports-grid.with-detail { grid-template-columns: 1fr; }
             .stats-row { flex-direction: column; }
@@ -262,7 +437,23 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
             Refresh
         </button>
-        <div class="user-badge">D</div>
+        <div class="user-menu">
+            <div class="user-badge" id="user-badge" style="cursor:pointer" onclick="toggleUserMenu()">D</div>
+            <div class="user-dropdown" id="user-dropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-name" id="dropdown-name">Dispatcher</div>
+                    <div class="dropdown-role">Dispecer logistică</div>
+                </div>
+                <div class="dropdown-item" onclick="showMyAccount()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Contul meu
+                </div>
+                <div class="dropdown-item danger" onclick="logout()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Deconectare
+                </div>
+            </div>
+        </div>
     </div>
 </header>
 
@@ -283,11 +474,7 @@
 </footer>
 
 <script>
-    // ═══════════════════════════════════════════════════════════
-    // VitalLink Dashboard v2 — Updated for new schema
-    // ═══════════════════════════════════════════════════════════
-
-    const API = '/api';
+    const API = 'http://localhost:8081/api';
     let token = null;
     let state = {
         stats: null,
@@ -313,8 +500,7 @@
         car: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>',
     };
 
-    // ─── CONFIG MAPS (schema nouă) ───────────────────────────
-    // category din resource_profiles
+    // ─── CONFIG ──────────────────────────────────────────────
     const CATEGORY_CFG = {
         ORGAN:                      { label: 'Organ',                    color: '#EF4444', bg: '#EF444418' },
         BLOOD_PRODUCT:              { label: 'Produs sanguin',           color: '#DC2626', bg: '#DC262618' },
@@ -330,10 +516,10 @@
         INCIDENT:   { label: 'Incident',   color: '#F59E0B', bg: '#F59E0B18' },
     };
     const SEV_CFG = {
-        CRITICAL: { color: '#EF4444', bg: '#EF444420', border: '#EF444440' },
-        HIGH:     { color: '#F59E0B', bg: '#F59E0B20', border: '#F59E0B40' },
-        MEDIUM:   { color: '#3B82F6', bg: '#3B82F620', border: '#3B82F640' },
-        LOW:      { color: '#10B981', bg: '#10B98120', border: '#10B98140' },
+        CRITICAL: { color: '#EF4444', bg: '#EF444420', border: '#EF444440', cls: 'critical' },
+        HIGH:     { color: '#F59E0B', bg: '#F59E0B20', border: '#F59E0B40', cls: 'high' },
+        MEDIUM:   { color: '#3B82F6', bg: '#3B82F620', border: '#3B82F640', cls: 'medium' },
+        LOW:      { color: '#10B981', bg: '#10B98120', border: '#10B98140', cls: 'low' },
     };
     const URGENCY_CFG = {
         ULTRA_CRITICAL: { label: 'Ultra-critic', color: '#EF4444' },
@@ -343,41 +529,72 @@
         LOW:            { label: 'Scăzut',       color: '#10B981' },
     };
 
-    // ─── HELPER: extract data from nested schema ─────────────
     function rp(t) { return t.resourceProfile || {}; }
     function fo(t) { return t.facilityOrigin || {}; }
     function fd(t) { return t.facilityDestination || {}; }
     function ve(t) { return t.vehicle || {}; }
     function dr(t) { return t.driver || {}; }
-
-    function getCat(t) {
-        const cat = rp(t).category || 'ORGAN';
-        return CATEGORY_CFG[cat] || { label: cat, color: '#888', bg: '#88888818' };
-    }
-    function getStat(t) {
-        return STATUS_CFG[t.status] || { label: t.status, color: '#888', bg: '#88888818' };
-    }
-    function getUrgency(t) {
-        const u = t.priorityOverride || rp(t).urgency || 'STANDARD';
-        return URGENCY_CFG[u] || { label: u, color: '#888' };
-    }
+    function getCat(t) { return CATEGORY_CFG[rp(t).category] || { label: rp(t).category||'—', color: '#888', bg: '#88888818' }; }
+    function getStat(t) { return STATUS_CFG[t.status] || { label: t.status, color: '#888', bg: '#88888818' }; }
+    function getUrgency(t) { return URGENCY_CFG[t.priorityOverride || rp(t).urgency || 'STANDARD'] || { label: '—', color: '#888' }; }
 
     // ─── AUTH ────────────────────────────────────────────────
-    async function login() {
-        const res = await fetch(`${API}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: 'dispatcher', password: 'dispatch123' }),
-        });
-        if (!res.ok) throw new Error('Login failed');
-        token = (await res.json()).token;
+    let currentUser = null;
+
+    async function doLogin() {
+        const username = document.getElementById('login-username').value || 'dispatcher';
+        const password = document.getElementById('login-password').value || 'dispatch123';
+        const errEl = document.getElementById('login-error');
+        errEl.style.display = 'none';
+        try {
+            const res = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+            });
+            if (!res.ok) { errEl.style.display = 'block'; return; }
+            const data = await res.json();
+            token = data.token;
+            currentUser = { username: data.username, role: data.role };
+            document.getElementById('login-overlay').style.display = 'none';
+            const initial = username.charAt(0).toUpperCase();
+            document.getElementById('user-badge').textContent = initial;
+            document.getElementById('dropdown-name').textContent = username.charAt(0).toUpperCase() + username.slice(1);
+            fetchAll();
+        } catch(e) { errEl.style.display = 'block'; }
     }
 
-    function authH() {
-        return { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+    function togglePass() {
+        const inp = document.getElementById('login-password');
+        const icon = document.getElementById('eye-icon');
+        if (inp.type === 'password') {
+            inp.type = 'text';
+            icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        } else {
+            inp.type = 'password';
+            icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
     }
 
-    // ─── FETCH ALL DATA ──────────────────────────────────────
+    function toggleUserMenu() { document.getElementById('user-dropdown').classList.toggle('open'); }
+    function showMyAccount() {
+        document.getElementById('user-dropdown').classList.remove('open');
+        alert(`Cont: ${currentUser?.username}\nRol: ${currentUser?.role}`);
+    }
+    function logout() {
+        token = null; currentUser = null;
+        document.getElementById('user-dropdown').classList.remove('open');
+        document.getElementById('login-overlay').style.display = 'flex';
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        document.getElementById('main-content').innerHTML = '';
+    }
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.user-menu')) document.getElementById('user-dropdown')?.classList.remove('open');
+    });
+    function authH() { return { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }; }
+
+    // ─── FETCH ───────────────────────────────────────────────
     async function fetchAll() {
         try {
             if (!token) await login();
@@ -390,41 +607,46 @@
             state.stats = await statsR.json();
             state.transports = await transR.json();
             state.alerts = await alertsR.json();
+            // Auto-selectează primul transport IN_TRANSIT în overview
+            if (!state.selectedTransport) {
+                state.selectedTransport = state.transports.find(t => t.status === 'IN_TRANSIT') || state.transports[0] || null;
+                if (state.selectedTransport) await loadTelemetry(state.selectedTransport.id);
+            }
             document.getElementById('last-refresh').textContent =
                 new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
             render();
         } catch (e) {
             document.getElementById('main-content').innerHTML = `
-            <div class="center-msg">
-                <div>
-                    <div class="error-msg" style="font-size:18px;font-weight:600;margin-bottom:8px;">Eroare conexiune</div>
-                    <div class="error-detail">${e.message}</div>
-                    <div class="error-hint">Asigură-te că backend-ul rulează pe localhost:8080</div>
-                    <button class="btn-retry" onclick="fetchAll()">Reîncearcă</button>
-                </div>
-            </div>`;
+            <div class="center-msg"><div>
+                <div class="error-msg" style="font-size:18px;font-weight:600;margin-bottom:8px;">Eroare conexiune</div>
+                <div class="error-detail">${e.message}</div>
+                <div class="error-hint">Asigură-te că backend-ul rulează pe localhost:8081</div>
+                <button class="btn-retry" onclick="fetchAll()">Reîncearcă</button>
+            </div></div>`;
         }
     }
 
-    // ─── ACKNOWLEDGE ALERT ───────────────────────────────────
+    async function loadTelemetry(id) {
+        try {
+            const res = await fetch(`${API}/transports/${id}/telemetry`, { headers: authH() });
+            state.telemetry = res.ok ? await res.json() : [];
+        } catch { state.telemetry = []; }
+    }
+
     async function ackAlert(id) {
         if (!token) return;
         try {
-            await fetch(`${API}/alerts/${id}/acknowledge?acknowledgedBy=dispatcher`, {
-                method: 'PUT', headers: authH(),
-            });
-            // Marchează ca acknowledged în ambele liste
-            const alert = state.alerts.find(a => a.id === id);
-            if (alert) alert.acknowledged = true;
-            const alertAll = state.allAlerts.find(a => a.id === id);
-            if (alertAll) alertAll.acknowledged = true;
+            await fetch(`${API}/alerts/${id}/acknowledge?acknowledgedBy=dispatcher`, { method: 'PUT', headers: authH() });
+            const a = state.alerts.find(x => x.id === id);
+            if (a) a.acknowledged = true;
+            const aa = state.allAlerts.find(x => x.id === id);
+            if (aa) aa.acknowledged = true;
             state.alerts = state.alerts.filter(a => !a.acknowledged);
             if (state.stats) state.stats.unacknowledgedAlerts--;
             render();
         } catch (e) { console.error(e); }
     }
 
-    // ─── TOGGLE ACKNOWLEDGED ─────────────────────────────────
     async function toggleAcknowledged() {
         state.showAcknowledged = !state.showAcknowledged;
         if (state.showAcknowledged && state.allAlerts.length === 0) {
@@ -436,241 +658,416 @@
         render();
     }
 
-    // ─── SELECT TRANSPORT ────────────────────────────────────
     async function selectTransport(id) {
         if (state.selectedTransport?.id === id) {
-            state.selectedTransport = null;
-            state.telemetry = [];
+            state.selectedTransport = null; state.telemetry = [];
         } else {
             state.selectedTransport = state.transports.find(t => t.id === id);
-            try {
-                const res = await fetch(`${API}/transports/${id}/telemetry`, { headers: authH() });
-                state.telemetry = res.ok ? await res.json() : [];
-            } catch { state.telemetry = []; }
+            await loadTelemetry(id);
         }
         render();
+        // Redesenăm graficele după render
+        if (state.selectedTransport) {
+            setTimeout(() => {
+                drawSelectedCharts();
+            }, 60);
+        }
     }
 
     // ─── MAP ─────────────────────────────────────────────────
     let mapInstance = null;
-
     function renderMap(transports) {
         setTimeout(() => {
             const el = document.getElementById('transport-map');
             if (!el || !window.L) return;
             if (mapInstance) { mapInstance.remove(); mapInstance = null; }
-
             const map = L.map('transport-map', { zoomControl: false }).setView([46.0, 25.0], 7);
             mapInstance = map;
             L.control.zoom({ position: 'bottomright' }).addTo(map);
-
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OSM &copy; CARTO', maxZoom: 19,
             }).addTo(map);
-
             const pts = [];
             transports.forEach(t => {
-                const c = getCat(t);
-                const s = getStat(t);
-                const origin = fo(t);
-                const dest = fd(t);
-                const profile = rp(t);
-
-                // Origine marker
+                const c = getCat(t); const s = getStat(t);
+                const origin = fo(t); const dest = fd(t); const profile = rp(t);
                 if (origin.latitude && origin.longitude) {
-                    const lat = Number(origin.latitude);
-                    const lng = Number(origin.longitude);
+                    const lat = Number(origin.latitude), lng = Number(origin.longitude);
                     pts.push([lat, lng]);
                     L.marker([lat, lng], {
-                        icon: L.divIcon({
-                            className: '',
+                        icon: L.divIcon({ className: '',
                             html: `<div style="width:14px;height:14px;border-radius:50%;background:${c.color};border:2px solid #fff;box-shadow:0 0 8px ${c.color}88"></div>`,
-                            iconSize: [14,14], iconAnchor: [7,7],
-                        })
-                    }).addTo(map).bindPopup(`
-                    <div style="font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6">
+                            iconSize:[14,14], iconAnchor:[7,7] })
+                    }).addTo(map).bindPopup(`<div style="font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6">
                         <strong style="color:${c.color}">${profile.displayName || c.label}</strong><br>
                         <span style="color:#888">Origine:</span> ${origin.name}, ${origin.city}<br>
                         <span style="color:#888">Destinație:</span> ${dest.name}, ${dest.city}<br>
-                        <span style="color:${s.color}">&bull; ${s.label}</span><br>
-                        <span style="color:#888">Temp:</span> ${profile.tempMinCelsius}&deg;C &ndash; ${profile.tempMaxCelsius}&deg;C
+                        <span style="color:${s.color}">&bull; ${s.label}</span>
                     </div>`);
                 }
-
-                // Destinație marker
                 if (dest.latitude && dest.longitude) {
-                    const lat = Number(dest.latitude);
-                    const lng = Number(dest.longitude);
+                    const lat = Number(dest.latitude), lng = Number(dest.longitude);
                     pts.push([lat, lng]);
                     L.marker([lat, lng], {
-                        icon: L.divIcon({
-                            className: '',
+                        icon: L.divIcon({ className: '',
                             html: `<div style="width:10px;height:10px;border-radius:50%;background:${c.color}66;border:2px dashed ${c.color}"></div>`,
-                            iconSize: [10,10], iconAnchor: [5,5],
-                        })
-                    }).addTo(map).bindPopup(`<div style="font-family:'DM Sans',sans-serif;font-size:13px">Destinație: ${dest.name}, ${dest.city}</div>`);
+                            iconSize:[10,10], iconAnchor:[5,5] })
+                    }).addTo(map);
                 }
-
-                // Linie între origine și destinație
                 if (origin.latitude && origin.longitude && dest.latitude && dest.longitude) {
                     L.polyline([
                         [Number(origin.latitude), Number(origin.longitude)],
                         [Number(dest.latitude), Number(dest.longitude)]
-                    ], {
-                        color: c.color, weight: 2, opacity: 0.5,
-                        dashArray: t.status === 'IN_TRANSIT' ? '8 6' : '4 4',
-                    }).addTo(map);
+                    ], { color: c.color, weight: 2, opacity: 0.5, dashArray: '8 6' }).addTo(map);
                 }
             });
             if (pts.length) map.fitBounds(pts, { padding: [40,40] });
         }, 50);
     }
 
+    // ─── GRAFICE ─────────────────────────────────────────────
+    function drawLineCanvas(canvasId, data, color, threshold) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.offsetWidth || 260;
+        const H = canvas.offsetHeight || 60;
+        canvas.width = W; canvas.height = H;
+        ctx.clearRect(0, 0, W, H);
+        if (!data || data.length < 2) return;
+
+        const min = Math.min(...data) - 0.5;
+        const max = Math.max(...data) + 0.5;
+        const sy = v => H - ((v - min) / (max - min)) * H * 0.85 - H * 0.08;
+        const sx = i => (i / (data.length - 1)) * W;
+
+        // Threshold line
+        if (threshold != null) {
+            const ty = sy(threshold);
+            ctx.save(); ctx.setLineDash([4,3]); ctx.strokeStyle = '#EF4444';
+            ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+            ctx.beginPath(); ctx.moveTo(0, ty); ctx.lineTo(W, ty); ctx.stroke();
+            ctx.restore();
+            // Fill above threshold
+            ctx.save(); ctx.beginPath();
+            ctx.moveTo(sx(0), sy(data[0]));
+            data.forEach((v,i) => ctx.lineTo(sx(i), sy(v)));
+            ctx.lineTo(W, sy(threshold)); ctx.lineTo(0, sy(threshold));
+            ctx.closePath(); ctx.fillStyle = 'rgba(239,68,68,0.10)'; ctx.fill();
+            ctx.restore();
+        } else {
+            // Normal fill
+            ctx.save(); ctx.beginPath();
+            ctx.moveTo(sx(0), H);
+            data.forEach((v,i) => ctx.lineTo(sx(i), sy(v)));
+            ctx.lineTo(W, H); ctx.closePath();
+            ctx.fillStyle = color + '18'; ctx.fill();
+            ctx.restore();
+        }
+
+        // Line
+        ctx.beginPath();
+        ctx.moveTo(sx(0), sy(data[0]));
+        data.forEach((v,i) => ctx.lineTo(sx(i), sy(v)));
+        ctx.strokeStyle = color; ctx.lineWidth = 1.8;
+        ctx.lineJoin = 'round'; ctx.stroke();
+    }
+
+    function drawSparkline(canvasId, data, color) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.offsetWidth || 120;
+        const H = canvas.offsetHeight || 28;
+        canvas.width = W; canvas.height = H;
+        ctx.clearRect(0,0,W,H);
+        if (!data || data.length < 2) return;
+        const min = Math.min(...data), max = Math.max(...data);
+        const range = max - min || 1;
+        const sy = v => H - ((v-min)/range) * H * 0.8 - H*0.1;
+        const sx = i => (i/(data.length-1)) * W;
+        ctx.beginPath();
+        ctx.moveTo(sx(0), sy(data[0]));
+        data.forEach((v,i) => ctx.lineTo(sx(i), sy(v)));
+        ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+        ctx.lineJoin = 'round'; ctx.stroke();
+    }
+
+    function drawSelectedCharts() {
+        const t = state.selectedTransport;
+        if (!t) return;
+        const profile = rp(t);
+        const maxTemp = Number(profile.tempMaxCelsius) || 10;
+
+        // Grafic temperatura din telemetrie (sau date generate dacă nu avem)
+        let tempData = [];
+        if (state.telemetry.length >= 2) {
+            tempData = state.telemetry.slice(0, 30).reverse()
+                .map(te => Number(te.temperatureCelsius)).filter(v => !isNaN(v));
+        } else {
+            // Date simulate pentru demo
+            const base = Number(profile.tempMinCelsius) || 2;
+            const mid = (Number(profile.tempMinCelsius||2) + maxTemp) / 2;
+            for (let i = 0; i < 25; i++) {
+                tempData.push(+(mid + (Math.random()-0.4)*2).toFixed(1));
+            }
+        }
+        drawLineCanvas('temp-main-chart', tempData, '#EF4444', maxTemp);
+
+        // Sparkline temperatura
+        drawSparkline('spark-temp', tempData.slice(-12), getCat(t).color);
+
+        // Sparkline viteza
+        let spdData = [];
+        if (state.telemetry.length >= 2) {
+            spdData = state.telemetry.slice(0,12).reverse()
+                .map(te => Number(te.speedKmh)).filter(v => !isNaN(v));
+        } else {
+            for (let i=0;i<12;i++) spdData.push(+(80+Math.random()*40).toFixed(0));
+        }
+        drawSparkline('spark-speed', spdData, '#10B981');
+    }
+
     // ─── RENDER HELPERS ──────────────────────────────────────
     function statCard(icon, label, value, color, sub) {
         return `<div class="stat-card">
-        <div class="glow" style="background:${color}08"></div>
-        <div class="stat-header">
-            <div style="color:${color};opacity:0.8">${icon}</div>
-            <span class="stat-label">${label}</span>
-        </div>
-        <div class="stat-value">${value}</div>
-        ${sub ? `<div class="stat-sub">${sub}</div>` : ''}
-    </div>`;
+            <div class="glow" style="background:${color}08"></div>
+            <div class="stat-header"><div style="color:${color};opacity:0.8">${icon}</div><span class="stat-label">${label}</span></div>
+            <div class="stat-value">${value}</div>
+            ${sub ? `<div class="stat-sub">${sub}</div>` : ''}
+        </div>`;
     }
 
-    // Versiune compactă pentru panoul Overview
-    function alertRowCompact(a) {
-        const s = SEV_CFG[a.severity] || SEV_CFG.LOW;
-        const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}) : '';
-        const tName = a.transport?.resourceProfile?.displayName || a.transport?.resourceProfile?.category || '';
-        // Mesaj scurt — tăiem la 80 caractere
-        const shortMsg = (a.message || 'Alertă').length > 80 ? (a.message || '').substring(0, 77) + '...' : (a.message || 'Alertă');
-        return `<div class="alert-row" style="background:${s.bg};border:1px solid ${s.border};padding:10px 14px;margin-bottom:6px">
-        <div class="alert-dot" style="background:${s.color};box-shadow:0 0 8px ${s.color}66"></div>
-        <div class="alert-content">
-            <div class="alert-msg" style="font-size:12px;margin-bottom:2px">${shortMsg}</div>
-            <div class="alert-meta">
-                <span class="sev" style="color:${s.color}">${a.severity}</span>
-                ${tName ? `<span>${tName}</span>` : ''}
-                <span>${svg.clock} ${time}</span>
+    // Panou transport selectat (partea dreapta overview)
+    function selectedTransportPanel() {
+        const t = state.selectedTransport;
+        if (!t) {
+            return `<div class="selected-panel">
+                <div class="selected-panel-header">Transport selectat</div>
+                <div style="padding:40px;text-align:center;color:#4B5563;font-size:13px;">
+                    Selectează un transport din hartă sau lista de mai jos
+                </div>
+            </div>`;
+        }
+        const c = getCat(t); const s = getStat(t);
+        const profile = rp(t); const origin = fo(t); const dest = fd(t);
+        const vehicle = ve(t); const driver = dr(t);
+        const driverName = driver.firstName ? `${driver.firstName} ${driver.lastName}` : null;
+
+        // Progres estimat (din estimatedDistanceKm dacă e disponibil)
+        const pct = t.status === 'DELIVERED' ? 100 : t.status === 'SCHEDULED' ? 0 : 54;
+
+        // Viabilitate
+        const viabHours = profile.maxViabilityHours || 24;
+        const elapsed = t.startedAt ? (Date.now() - new Date(t.startedAt).getTime()) / 3600000 : 0;
+        const remaining = Math.max(0, viabHours - elapsed);
+        const viabPct = Math.max(0, 100 - (elapsed / viabHours * 100));
+        const viabColor = viabPct > 50 ? '#10B981' : viabPct > 25 ? '#F59E0B' : '#EF4444';
+
+        return `<div class="selected-panel">
+            <div class="selected-panel-header">Transport selectat</div>
+            <div class="selected-content">
+                <div class="sel-status-row">
+                    <span class="sel-status-dot" style="background:${s.color}"></span>
+                    <span class="status-badge" style="color:${s.color};background:${s.bg};margin-bottom:0;">${s.label}</span>
+                </div>
+                <div class="sel-name">${profile.displayName || c.label}</div>
+                <div class="sel-id">${t.trackingCode || ('VL-' + String(t.id).padStart(6,'0'))}</div>
+
+                <!-- Rută cu progres -->
+                <div class="route-block">
+                    <div class="route-stops">
+                        <div class="route-stop">
+                            <div class="stop-circle filled"></div>
+                            <div class="stop-info">
+                                <div class="stop-name">${origin.name || '—'}</div>
+                                <div class="stop-sub">${origin.city || ''}</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" style="width:${pct}%"></div>
+                        </div>
+                        <div class="progress-label">${pct}% ${t.estimatedDistanceKm ? '· ' + t.estimatedDistanceKm + ' km total' : ''}</div>
+                        <div class="route-stop">
+                            <div class="stop-circle"></div>
+                            <div class="stop-info">
+                                <div class="stop-name">${dest.name || '—'}</div>
+                                <div class="stop-sub">${dest.city || ''}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini stats: temperatura + viteza -->
+                <div class="mini-stats-grid">
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Temperatură</div>
+                        <div class="mini-stat-value" style="color:${c.color}" id="sel-temp-val">—</div>
+                        <div class="mini-stat-sub">${profile.tempMinCelsius}° – ${profile.tempMaxCelsius}°C</div>
+                        <canvas class="sparkline-canvas" id="spark-temp" height="28"></canvas>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Viteză</div>
+                        <div class="mini-stat-value" id="sel-speed-val">—</div>
+                        <div class="mini-stat-sub">km/h</div>
+                        <canvas class="sparkline-canvas" id="spark-speed" height="28"></canvas>
+                    </div>
+                </div>
+
+                <!-- Grafic temperatura -->
+                <div class="temp-chart-block">
+                    <div class="temp-chart-header">
+                        <span>Temperatură · ultimele citiri</span>
+                        <span class="warn">prag ${profile.tempMaxCelsius}°C</span>
+                    </div>
+                    <canvas class="temp-canvas" id="temp-main-chart" height="60"></canvas>
+                </div>
+
+                <!-- Viabilitate -->
+                <div class="viability-block">
+                    <div class="viability-row">
+                        <span>Fereastră viabilitate</span>
+                        <span>${remaining.toFixed(1)}h rămase</span>
+                    </div>
+                    <div class="viability-bar">
+                        <div class="viability-fill" style="width:${viabPct}%;background:${viabColor}"></div>
+                    </div>
+                </div>
+
+                <!-- Meta -->
+                <div class="sel-meta">
+                    ${vehicle.licensePlate ? `<strong>Vehicul</strong> ${vehicle.licensePlate} · ${vehicle.vehicleType||''}<br>` : ''}
+                    ${driverName ? `<strong>Șofer</strong> ${driverName}<br>` : ''}
+                    ${t.estimatedDurationMin ? `<strong>Durată estimată</strong> ${t.estimatedDurationMin} min` : ''}
+                </div>
             </div>
-        </div>
-        ${!a.acknowledged ? `<button class="btn-ack" style="border:1px solid ${s.color}44;color:${s.color};padding:4px 10px;font-size:11px" onclick="ackAlert('${a.id}')">${svg.check}</button>` : ''}
-    </div>`;
+        </div>`;
     }
 
-    // Versiune detaliată pentru pagina Alerte
-    function alertRowFull(a) {
-        const s = SEV_CFG[a.severity] || SEV_CFG.LOW;
-        const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}) : '';
-        const tName = a.transport?.resourceProfile?.displayName || a.transport?.resourceProfile?.category || '';
-        const alertTypeLabel = (a.alertType || '').replace(/_/g, ' ');
-        return `<div class="alert-row" style="background:${s.bg};border:1px solid ${s.border}">
-        <div class="alert-dot" style="background:${s.color};box-shadow:0 0 8px ${s.color}66"></div>
-        <div class="alert-content">
-            <div class="alert-msg">${a.message || 'Alertă'}</div>
-            <div class="alert-meta">
-                <span class="sev" style="color:${s.color}">${a.severity}</span>
-                <span class="alert-type-badge">${alertTypeLabel}</span>
-                ${tName ? `<span style="color:#6B7280">${tName}</span>` : ''}
-                <span>${svg.clock} ${time}</span>
-                ${a.triggerValue != null ? `<span>Val: ${a.triggerValue}${a.thresholdValue != null ? ' / Limită: '+a.thresholdValue : ''}</span>` : ''}
+    // Stream alerte nou
+    function alertStreamPanel() {
+        const alerts = state.alerts.slice(0, 8);
+        const critCount = alerts.filter(a=>a.severity==='CRITICAL').length;
+
+        let itemsHtml = '';
+        if (alerts.length === 0) {
+            itemsHtml = '<div style="padding:24px;text-align:center;color:#4B5563;font-size:13px;">Nicio alertă neconfirmată ✓</div>';
+        } else {
+            alerts.forEach(a => {
+                const s = SEV_CFG[a.severity] || SEV_CFG.LOW;
+                const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}) : '';
+                const tName = a.transport?.resourceProfile?.displayName || a.transport?.resourceProfile?.category || '';
+                const shortMsg = (a.message||'Alertă').length > 90 ? (a.message||'').substring(0,87)+'...' : (a.message||'Alertă');
+                itemsHtml += `<div class="stream-item ${s.cls}">
+                    <div class="stream-top">
+                        <div class="stream-level-row">
+                            <span class="stream-dot" style="background:${s.color}"></span>
+                            <span class="stream-level" style="color:${s.color}">${a.severity}</span>
+                            ${tName ? `<span style="font-size:11px;color:#4B5563">· ${tName}</span>` : ''}
+                        </div>
+                        <span class="stream-time">${time}</span>
+                    </div>
+                    <div class="stream-msg">${shortMsg}</div>
+                    ${!a.acknowledged ? `<div class="stream-actions">
+                        <button class="btn-confirm-alert" onclick="ackAlert('${a.id}')">Confirmă</button>
+                    </div>` : ''}
+                </div>`;
+            });
+        }
+
+        return `<div class="panel">
+            <div class="panel-header">
+                ${svg.alert} Alerte live
+                ${alerts.length ? `<span class="badge-count">${alerts.length}</span>` : ''}
+                ${critCount ? `<span style="margin-left:auto;font-size:11px;color:#EF4444;font-weight:600">${critCount} critice</span>` : ''}
             </div>
-        </div>
-        ${!a.acknowledged ? `<button class="btn-ack" style="border:1px solid ${s.color}44;color:${s.color}" onclick="ackAlert('${a.id}')">${svg.check} Confirmă</button>` : ''}
-    </div>`;
+            <div class="panel-body scroll" style="padding:14px;">
+                <div class="alert-stream">${itemsHtml}</div>
+            </div>
+        </div>`;
     }
 
+    // Rândul de transport (lista)
     function transportRow(t) {
-        const c = getCat(t);
-        const s = getStat(t);
-        const profile = rp(t);
-        const origin = fo(t);
-        const dest = fd(t);
+        const c = getCat(t); const s = getStat(t); const profile = rp(t);
+        const origin = fo(t); const dest = fd(t);
         const sel = state.selectedTransport?.id === t.id;
         return `<div class="transport-row ${sel?'selected':''}" style="${sel?`border-color:${c.color}44`:''}" onclick="selectTransport('${t.id}')">
-        <div class="transport-icon" style="background:${c.bg};color:${c.color}">${svg.truck}</div>
-        <div class="transport-info">
-            <div class="transport-name">${profile.displayName || c.label}</div>
-            <div class="transport-route">${svg.pin} ${origin.city || origin.name || '?'} &rarr; ${dest.city || dest.name || '?'}</div>
-        </div>
-        <div class="transport-right">
-            <div class="status-badge" style="color:${s.color};background:${s.bg}">${s.label}</div>
-            <div class="transport-temp">${svg.thermo} ${profile.tempMinCelsius}&deg; &ndash; ${profile.tempMaxCelsius}&deg;C</div>
-        </div>
-    </div>`;
+            <div class="transport-icon" style="background:${c.bg};color:${c.color}">${svg.truck}</div>
+            <div class="transport-info">
+                <div class="transport-name">${profile.displayName || c.label}</div>
+                <div class="transport-route">${svg.pin} ${origin.city||origin.name||'?'} &rarr; ${dest.city||dest.name||'?'}</div>
+            </div>
+            <div class="transport-right">
+                <div class="status-badge" style="color:${s.color};background:${s.bg}">${s.label}</div>
+                <div class="transport-temp">${svg.thermo} ${profile.tempMinCelsius}° – ${profile.tempMaxCelsius}°C</div>
+            </div>
+        </div>`;
     }
 
+    // Detaliu transport extins (pagina Transporturi)
     function transportDetail(t) {
         if (!t) return '';
-        const c = getCat(t);
-        const s = getStat(t);
-        const profile = rp(t);
-        const origin = fo(t);
-        const dest = fd(t);
-        const vehicle = ve(t);
-        const driver = dr(t);
+        const c = getCat(t); const s = getStat(t); const profile = rp(t);
+        const origin = fo(t); const dest = fd(t);
+        const vehicle = ve(t); const driver = dr(t);
         const urg = getUrgency(t);
-
+        const driverName = driver.firstName ? `${driver.firstName} ${driver.lastName}` : null;
         const field = (l,v) => `<div><div class="field-label">${l}</div><div class="field-value">${v||'—'}</div></div>`;
         const fmtDate = d => d ? new Date(d).toLocaleString('ro-RO') : null;
 
-        let telemetryHtml = '';
+        let telHtml = '';
         if (state.telemetry.length > 0) {
             const rows = state.telemetry.slice(0,15).map((te,i) => {
-                const tempVal = te.temperatureCelsius != null ? Number(te.temperatureCelsius).toFixed(1) : '—';
+                const tv = te.temperatureCelsius != null ? Number(te.temperatureCelsius).toFixed(1) : '—';
                 const warn = te.temperatureCelsius != null && (Number(te.temperatureCelsius) > Number(profile.tempMaxCelsius) || Number(te.temperatureCelsius) < Number(profile.tempMinCelsius));
-                const humidity = te.humidityPercent != null ? Number(te.humidityPercent).toFixed(0) + '%' : '';
-                const speed = te.speedKmh != null ? Number(te.speedKmh).toFixed(0) + ' km/h' : '';
+                const hum = te.humidityPercent != null ? Number(te.humidityPercent).toFixed(0)+'%' : '';
+                const spd = te.speedKmh != null ? Number(te.speedKmh).toFixed(0)+' km/h' : '';
                 const coords = te.latitude ? `${Number(te.latitude).toFixed(4)}, ${Number(te.longitude).toFixed(4)}` : '';
                 return `<div class="telemetry-row ${i%2===0?'even':''}">
-                <span class="telemetry-time">${new Date(te.eventTimestamp || te.receivedAt).toLocaleTimeString('ro-RO')}</span>
-                <span class="telemetry-temp mono ${warn?'temp-warn':'temp-ok'}">${tempVal}&deg;C</span>
-                <span class="mono" style="color:#6B7280">${humidity}</span>
-                <span class="mono" style="color:#6B7280">${speed}</span>
-                <span class="telemetry-coords mono">${coords}</span>
-            </div>`;
+                    <span class="telemetry-time">${new Date(te.eventTimestamp||te.receivedAt).toLocaleTimeString('ro-RO')}</span>
+                    <span class="telemetry-temp mono ${warn?'temp-warn':'temp-ok'}">${tv}°C</span>
+                    <span class="mono" style="color:#6B7280">${hum}</span>
+                    <span class="mono" style="color:#6B7280">${spd}</span>
+                    <span class="telemetry-coords mono">${coords}</span>
+                </div>`;
             }).join('');
-
-            telemetryHtml = `<div class="telemetry-section">
-            <div class="telemetry-header">${svg.activity} Ultimele date telemetrie</div>
-            <div style="display:grid;grid-template-columns:90px 70px 60px 60px 1fr;gap:8px;padding:4px 12px;font-size:11px;color:#4B5563;margin-bottom:4px">
-                <span>Timp</span><span>Temp</span><span>Umid.</span><span>Viteză</span><span>Coordonate</span>
-            </div>
-            <div class="telemetry-list">${rows}</div>
-        </div>`;
+            telHtml = `<div class="telemetry-section">
+                <div class="telemetry-header">${svg.activity} Ultimele date telemetrie</div>
+                <div style="display:grid;grid-template-columns:90px 70px 60px 60px 1fr;gap:8px;padding:4px 12px;font-size:11px;color:#4B5563;margin-bottom:4px">
+                    <span>Timp</span><span>Temp</span><span>Umid.</span><span>Viteză</span><span>Coordonate</span>
+                </div>
+                <div class="telemetry-list">${rows}</div>
+            </div>`;
         }
 
-        const driverName = driver.firstName ? `${driver.firstName} ${driver.lastName}` : null;
-
         return `<div class="detail-panel">
-        <div class="detail-header">
-            <div class="detail-icon" style="background:${c.bg};color:${c.color}">${svg.truck}</div>
-            <div>
-                <div class="detail-title">${profile.displayName || c.label}</div>
-                <div class="detail-status" style="color:${s.color}">&bull; ${s.label}</div>
+            <div class="detail-header">
+                <div class="detail-icon" style="background:${c.bg};color:${c.color}">${svg.truck}</div>
+                <div>
+                    <div class="detail-title">${profile.displayName || c.label}</div>
+                    <div class="detail-status" style="color:${s.color}">&bull; ${s.label}</div>
+                </div>
             </div>
-        </div>
-        <div class="detail-grid">
-            ${field('Categorie', `${c.label} — ${profile.subtype || ''}`)}
-            ${field('Urgență', `<span class="urgency" style="color:${urg.color}">${urg.label}</span>`)}
-            ${field('Origine', `${origin.name}<br><span style="color:#6B7280;font-size:12px">${origin.city}${origin.county ? ', '+origin.county : ''}</span>`)}
-            ${field('Destinație', `${dest.name}<br><span style="color:#6B7280;font-size:12px">${dest.city}${dest.county ? ', '+dest.county : ''}</span>`)}
-            ${field('Interval temperatură', `${profile.tempMinCelsius}&deg;C &ndash; ${profile.tempMaxCelsius}&deg;C`)}
-            ${field('Viabilitate max', profile.maxViabilityHours ? profile.maxViabilityHours + ' ore' : null)}
-            ${field('Vehicul', vehicle.licensePlate ? `${vehicle.licensePlate} (${vehicle.vehicleType || ''})` : null)}
-            ${field('Șofer', driverName)}
-            ${field('Programat', fmtDate(t.scheduledAt))}
-            ${field('Pornit', fmtDate(t.startedAt))}
-            ${field('Livrat', fmtDate(t.deliveredAt))}
-            ${field('Deadline viabilitate', fmtDate(t.viabilityDeadline))}
-            ${t.estimatedDistanceKm ? field('Distanță estimată', t.estimatedDistanceKm + ' km') : ''}
-            ${t.estimatedDurationMin ? field('Durată estimată', t.estimatedDurationMin + ' min') : ''}
-        </div>
-        ${t.notes ? `<div style="margin-top:12px;padding:12px;background:#0D0F14;border-radius:8px;font-size:12px;color:#6B7280"><strong style="color:#9CA3AF">Note:</strong> ${t.notes}</div>` : ''}
-        ${telemetryHtml}
-    </div>`;
+            <div class="detail-grid">
+                ${field('Categorie', `${c.label} — ${profile.subtype||''}`)}
+                ${field('Urgență', `<span class="urgency" style="color:${urg.color}">${urg.label}</span>`)}
+                ${field('Origine', `${origin.name}<br><span style="color:#6B7280;font-size:12px">${origin.city}${origin.county?', '+origin.county:''}</span>`)}
+                ${field('Destinație', `${dest.name}<br><span style="color:#6B7280;font-size:12px">${dest.city}${dest.county?', '+dest.county:''}</span>`)}
+                ${field('Interval temperatură', `${profile.tempMinCelsius}°C – ${profile.tempMaxCelsius}°C`)}
+                ${field('Viabilitate max', profile.maxViabilityHours ? profile.maxViabilityHours+' ore' : null)}
+                ${field('Vehicul', vehicle.licensePlate ? `${vehicle.licensePlate} (${vehicle.vehicleType||''})` : null)}
+                ${field('Șofer', driverName)}
+                ${field('Programat', fmtDate(t.scheduledAt))}
+                ${field('Pornit', fmtDate(t.startedAt))}
+                ${field('Livrat', fmtDate(t.deliveredAt))}
+                ${field('Deadline viabilitate', fmtDate(t.viabilityDeadline))}
+                ${t.estimatedDistanceKm ? field('Distanță estimată', t.estimatedDistanceKm+' km') : ''}
+                ${t.estimatedDurationMin ? field('Durată estimată', t.estimatedDurationMin+' min') : ''}
+            </div>
+            ${t.notes ? `<div style="margin-top:12px;padding:12px;background:#0D0F14;border-radius:8px;font-size:12px;color:#6B7280"><strong style="color:#9CA3AF">Note:</strong> ${t.notes}</div>` : ''}
+            ${telHtml}
+        </div>`;
     }
 
     // ─── MAIN RENDER ─────────────────────────────────────────
@@ -679,96 +1076,115 @@
         const s = state.stats;
         const active = state.transports.filter(t => t.status === 'IN_TRANSIT');
         const critical = state.alerts.filter(a => a.severity === 'CRITICAL');
-
         let html = '';
 
-        // Stats row
         if (state.currentView === 'overview' || state.currentView === 'transports') {
             html += `<div class="stats-row">
-            ${statCard(svg.truck, 'Transporturi active', s?.activeTransports||0, '#10B981', 'în tranzit acum')}
-            ${statCard(svg.alert, 'Alerte neconfirmate', s?.unacknowledgedAlerts||0, '#EF4444', `${critical.length} critice`)}
-            ${statCard(svg.activity, 'Total transporturi', s?.totalTransports||0, '#3B82F6', 'din baza de date')}
-            ${statCard(svg.building, 'Facilități', s?.totalFacilities||0, '#8B5CF6', 'spitale & centre')}
-            ${statCard(svg.car, 'Vehicule', s?.totalVehicles||0, '#F59E0B', 'în flotă')}
-        </div>`;
+                ${statCard(svg.truck,    'Transporturi active', s?.activeTransports||0,    '#10B981', 'în tranzit acum')}
+                ${statCard(svg.alert,    'Alerte neconfirmate', s?.unacknowledgedAlerts||0, '#EF4444', `${critical.length} critice`)}
+                ${statCard(svg.activity, 'Total transporturi',  s?.totalTransports||0,      '#3B82F6', 'din baza de date')}
+                ${statCard(svg.building, 'Facilități',          s?.totalFacilities||0,      '#8B5CF6', 'spitale & centre')}
+                ${statCard(svg.car,      'Vehicule',            s?.totalVehicles||0,        '#F59E0B', 'în flotă')}
+            </div>`;
         }
 
-        // Overview
         if (state.currentView === 'overview') {
             html += `<div class="overview-grid">
-            <div class="panel map-container">
-                <div class="panel-header">${svg.pin} Hartă transporturi active <span style="font-size:11px;color:#4B5563;font-weight:400">— ${active.length} în tranzit</span></div>
-                <div class="map-inner"><div id="transport-map"></div></div>
-            </div>
-            <div class="panel">
-                <div class="panel-body scroll">
-                    <div style="font-size:13px;font-weight:600;color:#9CA3AF;display:flex;align-items:center;gap:8px;margin-bottom:16px">
-                        ${svg.alert} Alerte recente
-                        ${state.alerts.length ? `<span class="badge-count">${state.alerts.length}</span>` : ''}
+                <!-- Harta -->
+                <div class="panel map-container">
+                    <div class="panel-header">${svg.pin} Hartă transporturi active <span style="font-size:11px;color:#4B5563;font-weight:400">— ${active.length} în tranzit</span></div>
+                    <div class="map-inner"><div id="transport-map"></div></div>
+                    <!-- Lista compacta sub harta -->
+                    <div style="padding:12px 16px;border-top:1px solid #1E2028;">
+                        ${state.transports.slice(0,4).map(t => {
+                const c=getCat(t); const s2=getStat(t); const profile=rp(t);
+                const sel = state.selectedTransport?.id === t.id;
+                return `<div onclick="selectTransport('${t.id}')" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;background:${sel?'#1A1D26':'transparent'};margin-bottom:4px;transition:background 0.15s" onmouseover="this.style.background='#161920'" onmouseout="this.style.background='${sel?'#1A1D26':'transparent'}'">
+                                <div style="width:6px;height:6px;border-radius:50%;background:${c.color};flex-shrink:0"></div>
+                                <span style="font-size:12px;font-weight:600;color:#E5E7EB;flex:1">${profile.displayName||c.label}</span>
+                                <span style="font-size:11px;color:${s2.color}">${s2.label}</span>
+                            </div>`;
+            }).join('')}
                     </div>
-                    ${state.alerts.length === 0
-                ? '<div style="font-size:13px;color:#4B5563;text-align:center;padding:40px">Nicio alertă neconfirmată</div>'
-                : state.alerts.slice(0,15).map(alertRowCompact).join('')}
                 </div>
-            </div>
-        </div>`;
+                <!-- Transport selectat -->
+                ${selectedTransportPanel()}
+                <!-- Alerte -->
+                ${alertStreamPanel()}
+            </div>`;
         }
 
-        // Transports
         if (state.currentView === 'transports') {
             html += `<div class="transports-grid ${state.selectedTransport ? 'with-detail' : ''}">
-            <div>
-                <div class="section-header">${svg.truck} Toate transporturile (${state.transports.length})</div>
-                ${state.transports.map(transportRow).join('')}
-            </div>
-            ${state.selectedTransport ? `<div>${transportDetail(state.selectedTransport)}</div>` : ''}
-        </div>`;
+                <div>
+                    <div class="section-header">${svg.truck} Toate transporturile (${state.transports.length})</div>
+                    ${state.transports.map(transportRow).join('')}
+                </div>
+                ${state.selectedTransport ? `<div>${transportDetail(state.selectedTransport)}</div>` : ''}
+            </div>`;
         }
 
-        // Alerts
         if (state.currentView === 'alerts') {
             const displayAlerts = state.showAcknowledged ? state.allAlerts : state.alerts;
             const toggleLabel = state.showAcknowledged ? 'Arată doar neconfirmate' : 'Arată și confirmate';
             const toggleColor = state.showAcknowledged ? '#10B981' : '#6B7280';
             html += `<div style="max-width:700px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-                <div class="section-header" style="margin-bottom:0">${svg.alert} ${state.showAcknowledged ? 'Toate alertele' : 'Alerte neconfirmate'} (${displayAlerts.length})</div>
-                <button onclick="toggleAcknowledged()" style="background:#1A1D26;border:1px solid #2E3040;border-radius:8px;padding:6px 14px;color:${toggleColor};cursor:pointer;font-size:12px;font-family:inherit;display:flex;align-items:center;gap:5px">
-                    <span style="width:8px;height:8px;border-radius:50%;background:${toggleColor}"></span>
-                    ${toggleLabel}
-                </button>
-            </div>
-            ${displayAlerts.length === 0
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                    <div class="section-header" style="margin-bottom:0">${svg.alert} ${state.showAcknowledged?'Toate alertele':'Alerte neconfirmate'} (${displayAlerts.length})</div>
+                    <button onclick="toggleAcknowledged()" style="background:#1A1D26;border:1px solid #2E3040;border-radius:8px;padding:6px 14px;color:${toggleColor};cursor:pointer;font-size:12px;font-family:inherit;display:flex;align-items:center;gap:5px">
+                        <span style="width:8px;height:8px;border-radius:50%;background:${toggleColor}"></span>${toggleLabel}
+                    </button>
+                </div>
+                ${displayAlerts.length === 0
                 ? '<div class="empty-state">Toate alertele au fost confirmate ✓</div>'
                 : displayAlerts.map(a => {
+                    const s2 = SEV_CFG[a.severity]||SEV_CFG.LOW;
+                    const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}) : '';
+                    const tName = a.transport?.resourceProfile?.displayName||a.transport?.resourceProfile?.category||'';
+                    const alertTypeLabel = (a.alertType||'').replace(/_/g,' ');
                     if (a.acknowledged) {
-                        const s = SEV_CFG[a.severity] || SEV_CFG.LOW;
-                        const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}) : '';
-                        const tName = a.transport?.resourceProfile?.displayName || a.transport?.resourceProfile?.category || '';
-                        const alertTypeLabel = (a.alertType || '').replace(/_/g, ' ');
-                        const ackTime = a.acknowledgedAt ? new Date(a.acknowledgedAt).toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}) : '';
-                        return `<div class="alert-row" style="background:#111318;border:1px solid #1E2028;opacity:0.7">
-                            <div class="alert-dot" style="background:#4B5563"></div>
-                            <div class="alert-content">
-                                <div class="alert-msg" style="color:#6B7280;text-decoration:line-through">${a.message || 'Alertă'}</div>
-                                <div class="alert-meta">
-                                    <span style="color:#4B5563">${a.severity}</span>
-                                    <span class="alert-type-badge">${alertTypeLabel}</span>
-                                    ${tName ? `<span style="color:#4B5563">${tName}</span>` : ''}
-                                    <span>${svg.clock} ${time}</span>
-                                    <span style="color:#10B981">✓ ${a.acknowledgedBy || ''} ${ackTime}</span>
+                        return `<div class="stream-item acked">
+                                <div class="stream-top">
+                                    <div class="stream-level-row"><span class="stream-dot" style="background:#4B5563"></span><span class="stream-level" style="color:#4B5563">${a.severity}</span></div>
+                                    <span class="stream-time">${time}</span>
                                 </div>
-                            </div>
-                        </div>`;
+                                <div class="stream-msg acked">${a.message||'Alertă'}</div>
+                                <div class="stream-sub">✓ confirmat ${a.acknowledgedBy||''}</div>
+                            </div>`;
                     }
-                    return alertRowFull(a);
+                    return `<div class="stream-item ${s2.cls}">
+                            <div class="stream-top">
+                                <div class="stream-level-row">
+                                    <span class="stream-dot" style="background:${s2.color}"></span>
+                                    <span class="stream-level" style="color:${s2.color}">${a.severity}</span>
+                                    <span style="font-size:11px;color:#4B5563">${alertTypeLabel}</span>
+                                    ${tName ? `<span style="font-size:11px;color:#4B5563">· ${tName}</span>` : ''}
+                                </div>
+                                <span class="stream-time">${time}</span>
+                            </div>
+                            <div class="stream-msg">${a.message||'Alertă'}</div>
+                            ${a.triggerValue!=null?`<div class="stream-sub">Val: ${a.triggerValue}${a.thresholdValue!=null?' / Limită: '+a.thresholdValue:''}</div>`:''}
+                            <div class="stream-actions"><button class="btn-confirm-alert" onclick="ackAlert('${a.id}')">Confirmă</button></div>
+                        </div>`;
                 }).join('')}
-        </div>`;
+            </div>`;
         }
 
         main.innerHTML = html;
 
-        if (state.currentView === 'overview') renderMap(active);
+        // Update valorile live din telemetrie
+        if (state.selectedTransport && state.telemetry.length > 0) {
+            const last = state.telemetry[0];
+            const tempEl = document.getElementById('sel-temp-val');
+            const spdEl = document.getElementById('sel-speed-val');
+            if (tempEl && last.temperatureCelsius != null) tempEl.textContent = Number(last.temperatureCelsius).toFixed(1) + '°C';
+            if (spdEl && last.speedKmh != null) spdEl.textContent = Number(last.speedKmh).toFixed(0) + ' km/h';
+        }
+
+        if (state.currentView === 'overview') {
+            renderMap(active);
+            setTimeout(drawSelectedCharts, 80);
+        }
     }
 
     // ─── NAV TABS ────────────────────────────────────────────
@@ -777,17 +1193,46 @@
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             state.currentView = tab.dataset.view;
-            state.selectedTransport = null;
-            state.telemetry = [];
+            if (state.currentView !== 'transports') {
+                state.selectedTransport = state.transports.find(t => t.status === 'IN_TRANSIT') || state.transports[0] || null;
+            }
             render();
+            if (state.currentView === 'overview') setTimeout(drawSelectedCharts, 80);
         });
     });
 
-    // ─── REFRESH BUTTON ──────────────────────────────────────
     document.getElementById('btn-refresh').addEventListener('click', fetchAll);
-
-    // ─── INIT ────────────────────────────────────────────────
-    fetchAll();
 </script>
+
+<!-- Login overlay -->
+<div class="login-overlay" id="login-overlay">
+    <div class="login-box">
+        <div class="login-logo">
+            <div class="logo-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="login-title">VitalLink</div>
+                <div class="login-sub">Monitorizare logistică medicală</div>
+            </div>
+        </div>
+        <div class="login-field">
+            <label class="login-label">Utilizator</label>
+            <input class="login-input" type="text" id="login-username" placeholder="utilizator" />
+        </div>
+        <div style="position:relative">
+            <input class="login-input" type="password" id="login-password" placeholder="••••••••"
+                   onkeydown="if(event.key==='Enter') doLogin()" style="padding-right:42px"/>
+            <button onclick="togglePass()" type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#6B7280;padding:0" id="eye-btn">
+                <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+        </div>
+        <button class="btn-login" onclick="doLogin()">Autentificare</button>
+        <div class="login-error" id="login-error">Credențiale incorecte. Încearcă din nou.</div>
+    </div>
+</div>
+
 </body>
 </html>

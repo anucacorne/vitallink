@@ -1,11 +1,11 @@
 package com.vitallink.cloud.kafka;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vitallink.cloud.entity.Alert;
 import com.vitallink.cloud.entity.TelemetryEvent;
 import com.vitallink.cloud.entity.Transport;
 import com.vitallink.cloud.entity.ResourceProfile;
 import com.vitallink.cloud.repository.AlertRepository;
+import com.vitallink.cloud.repository.SensorRepository;
 import com.vitallink.cloud.repository.TelemetryEventRepository;
 import com.vitallink.cloud.repository.TransportRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -26,16 +26,16 @@ public class TelemetryConsumer {
     private final TelemetryEventRepository telemetryRepo;
     private final AlertRepository alertRepo;
     private final TransportRepository transportRepo;
-    private final ObjectMapper objectMapper;
+    private final SensorRepository sensorRepo;
 
     public TelemetryConsumer(TelemetryEventRepository telemetryRepo,
                              AlertRepository alertRepo,
                              TransportRepository transportRepo,
-                             ObjectMapper objectMapper) {
+                             SensorRepository sensorRepo) {
         this.telemetryRepo = telemetryRepo;
         this.alertRepo = alertRepo;
         this.transportRepo = transportRepo;
-        this.objectMapper = objectMapper;
+        this.sensorRepo = sensorRepo;
     }
 
     @KafkaListener(
@@ -65,9 +65,10 @@ public class TelemetryConsumer {
             event.setEventTimestamp(Instant.parse((String) payload.get("timestamp")));
             event.setReceivedAt(Instant.now());
 
-            // Sensor-ul va fi setat când integrăm simulatorul v2
-            // Deocamdată salvăm fără sensor_id (nullable în schema nouă — NU, e NOT NULL)
-            // TODO: mapare senzor din payload
+            String sensorId = (String) payload.get("sensorId");
+            if (sensorId != null) {
+                sensorRepo.findByDeviceId(sensorId).ifPresent(event::setSensor);
+            }
 
             telemetryRepo.save(event);
             checkTemperatureAlert(transport, event);
