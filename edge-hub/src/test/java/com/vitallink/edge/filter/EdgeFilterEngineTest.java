@@ -5,13 +5,11 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Teste unitare pentru EdgeFilterEngine.
- *   R1 - Impact critic (accelerație > 4G)
- *   R2 - Temperatură în afara intervalului sigur
- *   R3 - Heartbeat forțat la 30 de secunde
- *   R4 - Delta temperatură >= 0.2°C
- */
+/*Teste unitare pentru EdgeFilterEngine.
+ R1 - Impact critic (accelerație > 4G)
+ R2 - Temperatură în afara intervalului sigur
+ R3 - Heartbeat forțat la 30 de secunde
+ R4 - Delta temperatură >= 0.2°C */
 class EdgeFilterEngineTest {
     private EdgeFilterEngine engine;
     @BeforeEach
@@ -68,7 +66,6 @@ class EdgeFilterEngineTest {
 
 
     //  REGULA 2: Temperatură în afara intervalului sigur [0°C, 8°C]
-
     @Test
     @DisplayName("R2: Temperatură 12°C (> 8°C) → CRITICAL_ALERT")
     void r2_temperaturaDepasisteMaxim_declansezaAlertaCritica() {
@@ -113,7 +110,6 @@ class EdgeFilterEngineTest {
 
 
     //  REGULA 3: Heartbeat forțat — primul mesaj sau la 30 de secunde
-
     @Test
     @DisplayName("R3: Primul mesaj de la un senzor nou → HEARTBEAT, trimis în cloud")
     void r3_primulMesajSenzorNou_declansezaHeartbeat() {
@@ -137,9 +133,7 @@ class EdgeFilterEngineTest {
         assertEquals(EdgeFilterEngine.EdgeAction.DISCARD, result.action());
     }
 
-
     //  REGULA 4: Delta temperatură >= 0.2°C
-
     @Test
     @DisplayName("R4: Delta 0.3°C (>= 0.2°C) → SEND_TO_CLOUD, TEMPERATURE_DELTA")
     void r4_deltaTemperatura_depasestePrag_trimiteInCloud() {
@@ -185,9 +179,7 @@ class EdgeFilterEngineTest {
         // Delta nu poate fi calculat => DISCARD
         assertEquals(EdgeFilterEngine.EdgeAction.DISCARD, result.action());
     }
-
     //  Prioritatea regulilor: R1 înainte de R2
-
     @Test
     @DisplayName("Prioritate: Accelerație 5G ȘI temperatură 12°C → R1 câștigă (CRITICAL_ALERT)")
     void prioritate_r1InainteDeR2_ambeleCondiiDeclanseaza() {
@@ -199,7 +191,6 @@ class EdgeFilterEngineTest {
         assertTrue(result.explanation().contains("5") || result.explanation().contains("4"),
                 "Explanation trebuie să conțină valoarea accelerației");
     }
-
     //  Metrici de performanță
 
     @Test
