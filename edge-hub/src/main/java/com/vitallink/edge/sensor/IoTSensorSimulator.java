@@ -11,19 +11,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-/**
- * Simulator IoT Senzori - Nivel 1
- *
- * Simulează un nod fizic IoT montat pe unitatea de transport medical.
- * Generează date de temperatură și accelerometru la fiecare 500ms.
- *
- * Utilizat în licență pentru:
- * - Generarea fluxului de date brute (input pentru Edge Logic)
- * - Simularea evenimentelor de impact (accelerație > 4G)
- * - Testarea comportamentului în scenarii realiste
- *
- * Folosește Virtual Threads (Project Loom / Java 21) pentru
- * scheduling lightweight fără overhead de thread pool clasic.
+/*
+  Simulator IoT Senzori - Nivel 1
+  Simulează un nod fizic IoT montat pe unitatea de transport medical.
+  Generează date de temperatură și accelerometru la fiecare 500ms.
  */
 public class IoTSensorSimulator {
 
@@ -66,7 +57,6 @@ public class IoTSensorSimulator {
      */
     public void start() {
         running = true;
-        // Utilizăm Virtual Thread executor pentru thread-per-task model
         scheduler = Executors.newSingleThreadScheduledExecutor(
                 Thread.ofVirtual().name("sensor-sim-", 0).factory()
         );
@@ -82,9 +72,9 @@ public class IoTSensorSimulator {
         log.info(String.format("[SENSOR %s] Simulator oprit. Total tick-uri: %d", sensorId, tickCount));
     }
 
-    /**
-     * Generează și emite o citire de telemetrie.
-     * Apelat automat la fiecare 500ms.
+    /*
+     Generează și emite o citire de telemetrie.
+     Apelat automat la fiecare 500ms.
      */
     private void emitReading() {
         if (!running) return;
