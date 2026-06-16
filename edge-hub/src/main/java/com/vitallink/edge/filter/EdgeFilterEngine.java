@@ -10,46 +10,34 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
-/**
- * ============================================================
+/*
  * EdgeFilterEngine - Algoritm de Filtrare Edge Computing
- * ============================================================
  *
- * SCOP (pentru teză de licență):
- * Implementează logica de decizie "trimite sau nu în Cloud"
- * pentru a demonstra eficiența Edge Computing față de
- * procesarea directă în Cloud (Cloud-Only).
+ * Implementează logica de decizie "trimite sau nu în Cloud" pentru fiecare citire senzorială primită de la nivelul IoT
  *
- * REGULI DE FILTRARE:
- * 1. TEMPERATURE DELTA: Trimite dacă variația față de ultima
- *    valoare trimisă este >= TEMP_DELTA_THRESHOLD (0.2°C)
- * 2. HEARTBEAT: Trimite forțat la fiecare MAX_SILENCE_MS (30s)
- *    chiar dacă temperatura nu a variat suficient
- * 3. CRITICAL ALERT: Trimite IMEDIAT dacă accelerația > IMPACT_G_THRESHOLD (4G)
- *    sau temperatura e în afara intervalului sigur
+ * REGULI DE FILTRARE (evaluate în ordine de prioritate):
+ * R1. IMPACT CRITIC: Trimite IMEDIAT pe alerts.critical dacă accelerația depășește IMPACT_G_THRESHOLD (4G). Bypass orice altă filtrare.
+ * R2. TEMPERATURĂ CRITICĂ: Trimite IMEDIAT pe alerts.critical dacă temperatura este în afara intervalului sigur [TEMP_MIN_SAFE, TEMP_MAX_SAFE] (0°C - 8°C).
+ * R3. HEARTBEAT: Trimite forțat pe telemetry.filtered la fiecare MAX_SILENCE_MS (30s), chiar dacă temperatura nu a variat.
+ * R4. DELTA TEMPERATURĂ: Trimite pe telemetry.filtered dacă variația față de ultima valoare trimisă >= TEMP_DELTA_THRESHOLD (0.2°C).
  *
- * METRICI DE PERFORMANȚĂ:
- * Clasa colectează statistici pentru analiza din licență:
- * - totalMessagesReceived: toate mesajele de la senzori
- * - totalMessagesSentToCloud: mesaje care au trecut filtrul
- * - filteredOutCount: mesaje blocate (banda de rețea economisită)
- * - averageEdgeProcessingLatencyNs: latența de procesare la Edge
+ * Mesajele care nu îndeplinesc nicio regulă sunt blocate la Edge, reducând traficul de rețea cu până la 80-90%
  */
 public class EdgeFilterEngine {
 
     private static final Logger log = Logger.getLogger(EdgeFilterEngine.class.getName());
 
-    // --- Constante de filtrare (pot fi externalizate în config) ---
+    // Constante de filtrare (pot fi externalizate în config)
     private static final double TEMP_DELTA_THRESHOLD  = 0.2;    // °C
     private static final long   MAX_SILENCE_MS        = 30_000; // 30 secunde
     private static final double IMPACT_G_THRESHOLD    = 4.0;    // G-force
     private static final double TEMP_MIN_SAFE         = 0.0;    // °C
     private static final double TEMP_MAX_SAFE         = 8.0;    // °C
 
-    // --- Starea internă per senzor (Virtual Thread safe cu ConcurrentHashMap) ---
+    //Starea internă per senzor (Virtual Thread safe cu ConcurrentHashMap)
     private final Map<String, SensorState> sensorStates = new ConcurrentHashMap<>();
 
-    // --- Metrici pentru analiza de performanță (licență) ---
+    //Metrici pentru analiza de performanță
     private final AtomicLong totalMessagesReceived         = new AtomicLong(0);
     private final AtomicLong totalMessagesSentToCloud      = new AtomicLong(0);
     private final AtomicLong criticalAlertsSent            = new AtomicLong(0);
@@ -63,22 +51,17 @@ public class EdgeFilterEngine {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    // ---------------------------------------------------------------
     //  API Principal
-    // ---------------------------------------------------------------
-
-    /**
-     * Evaluează un mesaj de telemetrie brut și decide acțiunea Edge.
-     *
-     * @param message Mesajul primit de la senzor (Nivel 1)
-     * @return FilterDecision cu decizia și motivul
-     */
+     // Evaluează un mesaj de telemetrie brut și decide acțiunea Edge.
+     //@param message Mesajul primit de la senzor (Nivel 1)
+     //@return FilterDecision cu decizia și motivul
+   
     public FilterDecision evaluate(TelemetryReading message) {
         long startNs = System.nanoTime();
         totalMessagesReceived.incrementAndGet();
 
         try {
-            // --- REGULA 1: Impact critic - alertă IMEDIATĂ, bypass orice filtrare ---
+            // REGULA 1: Impact critic - alertă IMEDIATĂ, bypass orice filtrare
             if (message.accelerationG() != null
                     && message.accelerationG() > IMPACT_G_THRESHOLD) {
 
@@ -93,7 +76,7 @@ public class EdgeFilterEngine {
                                 message.accelerationG(), IMPACT_G_THRESHOLD));
             }
 
-            // --- REGULA 2: Temperatură în afara intervalului sigur ---
+            //REGULA 2: Temperatură în afara intervalului sigur
             if (message.temperatureCelsius() != null) {
                 if (message.temperatureCelsius() < TEMP_MIN_SAFE
                         || message.temperatureCelsius() > TEMP_MAX_SAFE) {
@@ -111,13 +94,13 @@ public class EdgeFilterEngine {
                 }
             }
 
-            // --- Recuperează sau inițializează starea senzorului ---
+            //Recuperează sau inițializează starea senzorului
             SensorState state = sensorStates.computeIfAbsent(
                     message.sensorId(), id -> new SensorState());
 
             long now = System.currentTimeMillis();
 
-            // --- REGULA 3: Heartbeat forțat la 30 secunde (chiar fără variație) ---
+            //REGULA 3: Heartbeat forțat la 30 secunde
             if (state.lastSentTimestampMs == 0
                     || (now - state.lastSentTimestampMs) >= MAX_SILENCE_MS) {
 
@@ -128,7 +111,7 @@ public class EdgeFilterEngine {
                         "Heartbeat forțat după " + MAX_SILENCE_MS / 1000 + "s");
             }
 
-            // --- REGULA 4: Delta temperatură >= 0.2°C ---
+            //REGULA 4: Delta temperatură >= 0.2°C
             if (message.temperatureCelsius() != null && state.lastTemperature != null) {
                 double delta = Math.abs(message.temperatureCelsius() - state.lastTemperature);
 
@@ -142,7 +125,7 @@ public class EdgeFilterEngine {
                 }
             }
 
-            // --- Nicio regulă nu s-a declanșat: FILTREAZĂ (nu trimite în Cloud) ---
+            //Nicio regulă nu s-a declanșat: FILTREAZĂ (nu trimite în Cloud)
             return FilterDecision.filtered(message,
                     "Delta temperatură sub prag și nu a expirat intervalul heartbeat");
 
@@ -153,10 +136,9 @@ public class EdgeFilterEngine {
         }
     }
 
-    /**
-     * Returnează un snapshot al metricilor de performanță.
-     * Utilizat pentru capitolul de analiză comparativă din licență.
-     */
+
+      //Returnează un snapshot al metricilor de performanță.
+
     public PerformanceMetrics getMetrics() {
         long received = totalMessagesReceived.get();
         long sent = totalMessagesSentToCloud.get();
@@ -183,14 +165,9 @@ public class EdgeFilterEngine {
         totalEdgeProcessingNs.set(0);
     }
 
-    // ---------------------------------------------------------------
-    //  Clase interne / Records
-    // ---------------------------------------------------------------
 
-    /**
-     * Starea internă menținută pentru fiecare senzor activ.
-     * Nu thread-safe în izolare — acces protejat prin ConcurrentHashMap.
-     */
+    //  Clase interne / Records
+      //Starea internă menținută pentru fiecare senzor activ.
     private static class SensorState {
         Double lastTemperature   = null;
         long   lastSentTimestampMs = 0;
@@ -201,9 +178,8 @@ public class EdgeFilterEngine {
         }
     }
 
-    /**
-     * Decizia returnată de EdgeFilterEngine după evaluarea unui mesaj.
-     */
+
+     //Decizia returnată de EdgeFilterEngine după evaluarea unui mesaj.
     public record FilterDecision(
             TelemetryReading reading,
             EdgeAction action,
@@ -236,8 +212,8 @@ public class EdgeFilterEngine {
     }
 
     public enum EdgeAction {
-        SEND_TO_CLOUD,    // Trimite normal pe topic-ul `telemetry-data`
-        CRITICAL_ALERT,   // Trimite IMEDIAT pe topic-ul `critical-alerts`
+        SEND_TO_CLOUD,    // Trimite normal pe topic-ul telemetry-data
+        CRITICAL_ALERT,   // Trimite IMEDIAT pe topic-ul critical-alerts
         DISCARD           // Blochează mesajul (nu consumă bandă)
     }
 
@@ -248,10 +224,9 @@ public class EdgeFilterEngine {
         BELOW_THRESHOLD       // Sub prag, filtrare normală
     }
 
-    /**
-     * Snapshot de performanță pentru analiza comparativă din licență.
-     * Edge vs Cloud: câte mesaje au fost reținute la Edge.
-     */
+   
+     // Edge vs Cloud: câte mesaje au fost reținute la Edge.
+    
     public record PerformanceMetrics(
             long totalReceived,
             long sentToCloud,
@@ -280,14 +255,7 @@ public class EdgeFilterEngine {
         }
     }
 
-    // ---------------------------------------------------------------
     //  Record pentru datele brute de la senzor (Nivel 1 input)
-    // ---------------------------------------------------------------
-
-    /**
-     * Date brute emise de un nod IoT (Nivel 1 - Senzori).
-     * Generat la fiecare 500ms de simulatorul de senzori.
-     */
     public record TelemetryReading(
             String sensorId,
             String shipmentId,
