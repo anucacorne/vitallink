@@ -5,13 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-/**
- * Clasa principală Spring Boot pentru modulul Edge Hub.
- *
- * Activează:
- * - Auto-configurarea Spring Boot
- * - Scheduling pentru logPerformanceMetrics()
- * - Virtual Threads (configurat în application.properties)
+/*
+Clasa principală Spring Boot pentru modulul Edge Hub.
+Activează:
+ - Auto-configurarea Spring Boot
+ - Scheduling pentru logPerformanceMetrics()
+ - Virtual Threads (configurat în application.properties)
  */
 @SpringBootApplication
 @EnableScheduling
