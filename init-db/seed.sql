@@ -1,15 +1,15 @@
--- ============================================================
+
 --  VitalLink — Date initiale (seed)
 --  Vehicule si transporturi demo pentru testare
--- ============================================================
 
--- ─── Vehicule ─────────────────────────────────────────────────
+
+--  Vehicule
 INSERT INTO vehicles (id, license_plate, vehicle_type, active) VALUES
                                                                    ('a1b2c3d4-0001-0001-0001-000000000001', 'IS-01-VTL', 'Ambulanta frigorifica', TRUE),
                                                                    ('a1b2c3d4-0002-0002-0002-000000000002', 'IS-02-VTL', 'Autoutilitara medicala', TRUE),
                                                                    ('a1b2c3d4-0003-0003-0003-000000000003', 'IS-03-VTL', 'Ambulanta standard',    TRUE);
 
--- ─── Transporturi demo ────────────────────────────────────────
+--Transporturi demo 
 INSERT INTO transports (
     id, vehicle_id, transport_type, status,
     origin, destination,
@@ -45,7 +45,7 @@ INSERT INTO transports (
           NOW() + INTERVAL '2 hours', NULL
       );
 
--- ─── Audit log initial ────────────────────────────────────────
+-- Audit log initial 
 INSERT INTO transport_audit_log (transport_id, event_type, new_status, details) VALUES
                                                                                     (
                                                                                         'b1b2c3d4-0001-0001-0001-000000000001',
