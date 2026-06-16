@@ -1,19 +1,13 @@
 package com.vitallink.cloud.security;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
-/**
+/*
  * Controller pentru autentificare JWT.
- *
- * Utilizatori demo pentru prezentarea la comisie:
- * - dispatcher / dispatch123  → rol DISPATCHER
- * - admin      / admin123     → rol ADMIN
- *
- * În producție aceștia ar fi stocați în baza de date
- * cu parole hash-uite BCrypt.
+ * Utilizatori demo:
+ * - dispatcher / dispatch123  (rol DISPATCHER)
+ * - admin      / admin123     (rol ADMIN)
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -25,12 +19,11 @@ public class AuthController {
     public AuthController(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
-
-    /**
-     * POST /api/auth/login
-     * Body: { "username": "dispatcher", "password": "dispatch123" }
-     * Response: { "token": "eyJ..." }
-     */
+ 
+      //POST /api/auth/login
+      //Body: { "username": "dispatcher", "password": "dispatch123" }
+     //Response: { "token": "eyJ..." }
+     
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
@@ -54,10 +47,8 @@ public class AuthController {
         ));
     }
 
-    /**
-     * GET /api/auth/validate
-     * Verifică dacă token-ul curent este valid.
-     */
+     // GET /api/auth/validate
+     // Verifică dacă tokenul curent este valid.
     @GetMapping("/validate")
     public ResponseEntity<?> validate(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
