@@ -14,14 +14,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Filtru JWT care interceptează fiecare request HTTP.
- * Extrage și validează token-ul din header-ul Authorization.
- */
+  //Filtru JWT extrage și validează tokenul din headerul Authorization
+
 public class JwtAuthFilter extends OncePerRequestFilter {
-
     private final JwtUtils jwtUtils;
-
     public JwtAuthFilter(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
