@@ -11,15 +11,14 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
-/**
- * Orchestratorul principal al Edge Hub-ului (Nivel 2).
- *
- * Coordonează:
- * 1. Primirea datelor de la simulatorul IoT (Nivel 1)
- * 2. Aplicarea filtrelor Edge (EdgeFilterEngine)
- * 3. Buffering local când conexiunea Cloud este indisponibilă
- * 4. Transmiterea mesajelor filtrate prin Kafka către Cloud (Nivel 3)
- * 5. Alertele locale independente de conexiunea la Cloud
+/*
+ Orchestratorul principal al Edge Hub-ului (Nivel 2).
+  Coordonează:
+  1. Primirea datelor de la simulatorul IoT (Nivel 1)
+  2. Aplicarea filtrelor Edge (EdgeFilterEngine)
+  3. Buffering local când conexiunea Cloud este indisponibilă
+  4. Transmiterea mesajelor filtrate prin Kafka către Cloud (Nivel 3)
+  5. Alertele locale independente de conexiunea la Cloud
  */
 @Service
 public class EdgeHubOrchestrator {
@@ -40,9 +39,9 @@ public class EdgeHubOrchestrator {
         this.localBuffer   = new ArrayBlockingQueue<>(LOCAL_BUFFER_CAPACITY);
     }
 
-    /**
-     * Înregistrează un transport nou și pornește simulatorul de senzori.
-     */
+    
+      //Înregistrează un transport nou și pornește simulatorul de senzori.
+     
     public IoTSensorSimulator registerShipment(String shipmentId) {
         IoTSensorSimulator simulator = new IoTSensorSimulator(shipmentId, this::onSensorReading);
         activeSimulators.add(simulator);
@@ -51,10 +50,10 @@ public class EdgeHubOrchestrator {
         return simulator;
     }
 
-    /**
-     * Callback apelat de fiecare senzor la 500ms.
-     * Aplică logica de filtrare și direcționează mesajul.
-     */
+    
+     // Callback apelat de fiecare senzor la 500ms.
+      //Aplică logica de filtrare și direcționează mesajul.
+     
     private void onSensorReading(TelemetryReading reading) {
         FilterDecision decision = filterEngine.evaluate(reading);
 
@@ -74,9 +73,8 @@ public class EdgeHubOrchestrator {
         }
     }
 
-    /**
-     * Alertă locală IMEDIATĂ — nu depinde de conexiunea Cloud.
-     */
+    
+     // Alertă locală IMEDIATĂ — nu depinde de conexiunea Cloud.
     private void handleLocalAlert(FilterDecision decision) {
         log.severe(String.format(
                 "[EDGE ALERT LOCAL] %s | Sensor: %s | Motiv: %s",
@@ -86,9 +84,8 @@ public class EdgeHubOrchestrator {
         ));
     }
 
-    /**
-     * Transmite mesajul filtrat în Kafka.
-     */
+     //Transmite mesajul filtrat în Kafka.
+     
     private void forwardToCloud(FilterDecision decision) {
         log.info(String.format(
                 "[EDGE -> KAFKA] Shipment: %s | Motiv: %s",
@@ -97,9 +94,9 @@ public class EdgeHubOrchestrator {
         kafkaProducer.publish(decision);
     }
 
-    /**
-     * Stochează local în caz de pierdere semnal GSM.
-     */
+
+     // Stochează local în caz de pierdere semnal GSM.
+     
     private void bufferLocally(FilterDecision decision) {
         boolean added = localBuffer.offer(decision);
         if (!added) {
@@ -111,9 +108,7 @@ public class EdgeHubOrchestrator {
         }
     }
 
-    /**
-     * Golește buffer-ul după revenirea conexiunii Cloud.
-     */
+      //Golește buffer-ul după revenirea conexiunii Cloud.
     private void flushLocalBuffer() {
         if (localBuffer.isEmpty()) return;
         int flushed = 0;
@@ -127,9 +122,7 @@ public class EdgeHubOrchestrator {
         }
     }
 
-    /**
-     * Afișează metricile de performanță la fiecare 60 de secunde.
-     */
+     // Afișează metricile de performanță la fiecare 60 de secunde.
     @Scheduled(fixedDelay = 60_000)
     public void logPerformanceMetrics() {
         PerformanceMetrics metrics = filterEngine.getMetrics();
