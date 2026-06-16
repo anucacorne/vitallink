@@ -1,11 +1,9 @@
--- ============================================================
---  VitalLink — Schema bază de date (versiune actualizată)
---  PostgreSQL 16 — generată conform entităților JPA
--- ============================================================
+--  VitalLink — Schema bază de date 
+--  PostgreSQL 16 — conform entităților JPA
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- ─── resource_profiles ───────────────────────────────────────
+-- resource_profiles
 CREATE TABLE resource_profiles (
                                    id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                                    category                VARCHAR(100) NOT NULL,
@@ -29,7 +27,7 @@ CREATE TABLE resource_profiles (
                                    created_at              TIMESTAMP DEFAULT NOW()
 );
 
--- ─── facilities ──────────────────────────────────────────────
+--facilities
 CREATE TABLE facilities (
                             id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                             name            VARCHAR(255) NOT NULL,
@@ -48,7 +46,7 @@ CREATE TABLE facilities (
                             created_at      TIMESTAMP DEFAULT NOW()
 );
 
--- ─── vehicles ────────────────────────────────────────────────
+-- vehicles
 CREATE TABLE vehicles (
                           id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                           license_plate       VARCHAR(20) NOT NULL UNIQUE,
@@ -63,7 +61,7 @@ CREATE TABLE vehicles (
                           updated_at          TIMESTAMP DEFAULT NOW()
 );
 
--- ─── drivers ─────────────────────────────────────────────────
+-- drivers
 CREATE TABLE drivers (
                          id                          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                          first_name                  VARCHAR(100) NOT NULL,
@@ -76,7 +74,7 @@ CREATE TABLE drivers (
                          created_at                  TIMESTAMP DEFAULT NOW()
 );
 
--- ─── transports ──────────────────────────────────────────────
+-- transports 
 CREATE TABLE transports (
                             id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                             resource_profile_id     UUID NOT NULL REFERENCES resource_profiles(id),
@@ -99,7 +97,7 @@ CREATE TABLE transports (
 
 CREATE INDEX idx_transports_status ON transports(status);
 
--- ─── containers ──────────────────────────────────────────────
+-- containers
 CREATE TABLE containers (
                             id                   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                             transport_id         UUID NOT NULL REFERENCES transports(id),
@@ -113,7 +111,7 @@ CREATE TABLE containers (
 
 CREATE INDEX idx_containers_transport_id ON containers(transport_id);
 
--- ─── sensors ─────────────────────────────────────────────────
+--sensors
 CREATE TABLE sensors (
                          id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                          container_id    UUID NOT NULL REFERENCES containers(id),
@@ -129,7 +127,7 @@ CREATE TABLE sensors (
 CREATE INDEX idx_sensors_container_id ON sensors(container_id);
 CREATE INDEX idx_sensors_device_id    ON sensors(device_id);
 
--- ─── telemetry_events ────────────────────────────────────────
+-- telemetry_events
 CREATE TABLE telemetry_events (
                                   id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                                   sensor_id           UUID NOT NULL REFERENCES sensors(id),
@@ -155,7 +153,7 @@ CREATE INDEX idx_telemetry_transport_id ON telemetry_events(transport_id);
 CREATE INDEX idx_telemetry_sensor_id    ON telemetry_events(sensor_id);
 CREATE INDEX idx_telemetry_received_at  ON telemetry_events(received_at DESC);
 
--- ─── alerts ──────────────────────────────────────────────────
+--alerts
 CREATE TABLE alerts (
                         id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                         transport_id        UUID NOT NULL REFERENCES transports(id),
@@ -182,7 +180,7 @@ CREATE INDEX idx_alerts_transport_id ON alerts(transport_id);
 CREATE INDEX idx_alerts_acknowledged ON alerts(acknowledged) WHERE acknowledged = FALSE;
 CREATE INDEX idx_alerts_severity     ON alerts(severity);
 
--- ─── transport_logs ──────────────────────────────────────────
+-- transport_logs
 CREATE TABLE transport_logs (
                                 id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                                 transport_id    UUID NOT NULL REFERENCES transports(id),
