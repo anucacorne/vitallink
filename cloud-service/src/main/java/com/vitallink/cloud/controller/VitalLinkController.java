@@ -43,7 +43,7 @@ public class VitalLinkController {
         this.resourceProfileRepo = resourceProfileRepo;
     }
 
-    // ─── Transporturi ─────────────────────────────────────────
+    // Transporturi 
 
     @GetMapping("/transports")
     public List<Transport> getAllTransports() {
@@ -72,7 +72,7 @@ public class VitalLinkController {
         return containerRepo.findByTransportId(id);
     }
 
-    // ─── Alerte ───────────────────────────────────────────────
+    //Alerte
 
     @GetMapping("/alerts")
     public List<Alert> getUnacknowledgedAlerts() {
@@ -107,7 +107,7 @@ public class VitalLinkController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    // ─── Facilities ───────────────────────────────────────────
+    //Facilities
 
     @GetMapping("/facilities")
     public List<Facility> getAllFacilities() {
@@ -121,28 +121,28 @@ public class VitalLinkController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ─── Vehicles ─────────────────────────────────────────────
+    //Vehicles
 
     @GetMapping("/vehicles")
     public List<Vehicle> getAllVehicles() {
         return vehicleRepo.findAll();
     }
 
-    // ─── Drivers ──────────────────────────────────────────────
+    // Drivers
 
     @GetMapping("/drivers")
     public List<Driver> getAllDrivers() {
         return driverRepo.findAll();
     }
 
-    // ─── Resource Profiles ────────────────────────────────────
+    // Resource Profiles 
 
     @GetMapping("/resource-profiles")
     public List<ResourceProfile> getAllResourceProfiles() {
         return resourceProfileRepo.findAll();
     }
 
-    // ─── Dashboard ────────────────────────────────────────────
+    //  Dashboard
 
     @GetMapping("/dashboard/stats")
     public Map<String, Object> getDashboardStats() {
