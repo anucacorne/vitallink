@@ -9,15 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Serviciu de publicare evenimente filtrate în Apache Kafka.
- *
- * Înlocuiește TODO-ul MQTT din EdgeHubOrchestrator cu
- * o implementare reală Kafka.
- *
- * Topicuri utilizate:
- * - telemetry.filtered  → date normale filtrate de Edge
- * - alerts.critical     → alerte critice (temperatură, impact)
+/*
+ Serviciu de publicare evenimente filtrate în Apache Kafka.
+ Înlocuiește TODO-ul MQTT din EdgeHubOrchestrator cu o implementare reală Kafka.
+ Topicuri utilizate:
+ - telemetry.filtered  → date normale filtrate de Edge
+ - alerts.critical     → alerte critice (temperatură, impact)
  */
 @Service
 public class KafkaProducerService {
@@ -36,15 +33,13 @@ public class KafkaProducerService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    /**
-     * Publică o decizie de filtrare în topicul Kafka corespunzător.
-     * Cheia mesajului = shipmentId (garantează ordinea per transport).
-     */
+ 
+      //Publică o decizie de filtrare în topicul Kafka corespunzător.
+      //Cheia mesajului = shipmentId (garantează ordinea per transport).
     public void publish(FilterDecision decision) {
         String topic = decision.isCritical() ? alertsTopic : telemetryTopic;
         String key   = decision.reading().shipmentId();
 
-        // Construim payload-ul mesajului
         Map<String, Object> payload = buildPayload(decision);
 
         kafkaTemplate.send(topic, key, payload)
@@ -61,9 +56,8 @@ public class KafkaProducerService {
                 });
     }
 
-    /**
-     * Construiește payload-ul JSON pentru mesajul Kafka.
-     */
+      //Construiește payload-ul JSON pentru mesajul Kafka.
+
     private Map<String, Object> buildPayload(FilterDecision decision) {
         TelemetryReading r = decision.reading();
         return Map.ofEntries(
