@@ -1,13 +1,12 @@
 package com.vitallink.cloud.kafka;
 
-import com.vitallink.cloud.entity.Alert;
 import com.vitallink.cloud.entity.TelemetryEvent;
 import com.vitallink.cloud.entity.Transport;
-import com.vitallink.cloud.entity.ResourceProfile;
 import com.vitallink.cloud.repository.AlertRepository;
 import com.vitallink.cloud.repository.SensorRepository;
 import com.vitallink.cloud.repository.TelemetryEventRepository;
 import com.vitallink.cloud.repository.TransportRepository;
+import com.vitallink.cloud.service.AlertService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -24,22 +23,20 @@ public class TelemetryConsumer {
     private static final Logger log = Logger.getLogger(TelemetryConsumer.class.getName());
 
     private final TelemetryEventRepository telemetryRepo;
-    private final AlertRepository alertRepo;
     private final TransportRepository transportRepo;
     private final SensorRepository sensorRepo;
+    private final AlertService alertService;
 
     public TelemetryConsumer(TelemetryEventRepository telemetryRepo,
-                             AlertRepository alertRepo,
                              TransportRepository transportRepo,
-                             SensorRepository sensorRepo) {
+                             SensorRepository sensorRepo, AlertService alertService) {
         this.telemetryRepo = telemetryRepo;
-        this.alertRepo = alertRepo;
         this.transportRepo = transportRepo;
         this.sensorRepo = sensorRepo;
+        this.alertService = alertService;
     }
 
     @KafkaListener(
-            topics = "${vitallink.kafka.topic.telemetry}",
             groupId = "cloud-service-telemetry",
             containerFactory = "kafkaListenerContainerFactory"
     )
@@ -71,7 +68,7 @@ public class TelemetryConsumer {
             }
 
             telemetryRepo.save(event);
-            checkTemperatureAlert(transport, event);
+            alertService.checkTemperatureAlert(transport, event);
 
         } catch (Exception e) {
             log.severe("[KAFKA CONSUMER] Eroare procesare mesaj: " + e.getMessage());
@@ -93,55 +90,13 @@ public class TelemetryConsumer {
             Transport transport = transportRepo.findById(UUID.fromString(shipmentId)).orElse(null);
             if (transport == null) return;
 
-            Alert alert = new Alert();
-            alert.setTransport(transport);
-            alert.setSeverity("CRITICAL");
-            alert.setAlertType("TEMP_EXCEEDED");
-            alert.setMessage((String) payload.get("explanation"));
-            alert.setTriggerValue(toBigDecimal(payload.get("temperature")));
-            alert.setLatitude(toBigDecimal(payload.get("latitude")));
-            alert.setLongitude(toBigDecimal(payload.get("longitude")));
-            alert.setAcknowledged(false);
-
-            alertRepo.save(alert);
-            log.warning("[KAFKA CONSUMER] Alertă critică salvată în BD pentru: " + shipmentId);
+            alertService.saveCriticalAlert(transport, payload);
 
         } catch (Exception e) {
             log.severe("[KAFKA CONSUMER] Eroare procesare alertă critică: " + e.getMessage());
         }
     }
 
-    private void checkTemperatureAlert(Transport transport, TelemetryEvent event) {
-        BigDecimal temp = event.getTemperatureCelsius();
-        if (temp == null) return;
-
-        ResourceProfile profile = transport.getResourceProfile();
-        if (profile == null) return;
-
-        boolean exceeded = temp.compareTo(profile.getTempMaxCelsius()) > 0;
-        boolean below = temp.compareTo(profile.getTempMinCelsius()) < 0;
-
-        if (!exceeded && !below) return;
-
-        Alert alert = new Alert();
-        alert.setTransport(transport);
-        alert.setSeverity("HIGH");
-        alert.setAlertType(exceeded ? "TEMP_EXCEEDED" : "TEMP_BELOW");
-        alert.setMessage(String.format(
-                "Temperatură %.1f°C %s intervalul sigur [%.1f, %.1f]°C",
-                temp,
-                exceeded ? "depășește" : "este sub",
-                profile.getTempMinCelsius(),
-                profile.getTempMaxCelsius()
-        ));
-        alert.setTriggerValue(temp);
-        alert.setThresholdValue(exceeded ? profile.getTempMaxCelsius() : profile.getTempMinCelsius());
-        alert.setLatitude(event.getLatitude());
-        alert.setLongitude(event.getLongitude());
-
-        alertRepo.save(alert);
-        log.warning(String.format("[ALERT] %s pentru transportul %s", alert.getAlertType(), transport.getId()));
-    }
 
     private BigDecimal toBigDecimal(Object value) {
         if (value == null) return null;
