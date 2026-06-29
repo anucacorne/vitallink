@@ -37,8 +37,9 @@ public class TelemetryConsumer {
     }
 
     @KafkaListener(
-            groupId = "cloud-service-telemetry",
-            containerFactory = "kafkaListenerContainerFactory"
+        topics = "${vitallink.kafka.topic.telemetry}",
+        groupId = "cloud-service-telemetry",
+        containerFactory = "kafkaListenerContainerFactory"
     )
     public void consumeTelemetry(ConsumerRecord<String, Map<String, Object>> record) {
         try {
