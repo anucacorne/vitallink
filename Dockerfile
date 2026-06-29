@@ -5,7 +5,7 @@ COPY cloud-service/pom.xml cloud-service/
 COPY edge-hub/pom.xml edge-hub/
 RUN mvn dependency:go-offline -pl cloud-service -am -q || true
 COPY . .
-RUN mvn package -pl cloud-service -am -DskipTests -q
+RUN mvn package -pl cloud-service -am -Dmaven.test.skip=true -q
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
